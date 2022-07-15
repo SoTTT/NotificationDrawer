@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NotificationDrawer</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">通知抽屉</string>
+    <string name="welcome_text">欢迎使用通知抽屉，通知抽屉是一款通知聚合及过滤类软件，可以辅助你更好的管理手机上的通知，对弹出的通知自动归类分组，并通过预置或自定义的规则过滤不希望看到的通知，即使该应用确实具有通知权限，另一方面，我们希望它能提取并整合一部分信息，而且足够易用，以便为那些不太擅长使用智能手机的人群提供帮助</string>
+    <string name="statement_text">为了使软件正常运行，在开始之前需要授予该软件以下权限：</string>
+</resources>
