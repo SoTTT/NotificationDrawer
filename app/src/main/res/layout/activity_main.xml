@@ -6,10 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/center"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.sottt.notificationdrawer.ui.welcomeFragment.WelcomeFragment" />
+        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

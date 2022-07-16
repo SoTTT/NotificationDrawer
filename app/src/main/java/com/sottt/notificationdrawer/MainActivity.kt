@@ -3,6 +3,7 @@ package com.sottt.notificationdrawer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.sottt.notificationdrawer.databinding.ActivityMainBinding
+import com.sottt.notificationdrawer.ui.welcomeFragment.WelcomeFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,5 +14,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
+        val fragmentManager = supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+        transaction.replace(viewBinding.center.id, WelcomeFragment())
+        transaction.commit()
     }
 }

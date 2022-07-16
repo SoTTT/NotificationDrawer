@@ -11,6 +11,7 @@ class NotificationDrawerApplication : Application() {
         private lateinit var mContext: Context
 
         fun applicationContext() = mContext
+
     }
 
 
