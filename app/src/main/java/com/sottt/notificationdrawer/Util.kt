@@ -2,8 +2,10 @@ package com.sottt.notificationdrawer
 
 import android.app.NotificationManager
 import android.content.Context
+import android.os.PowerManager
 import android.provider.Settings
 import android.widget.Toast
+import androidx.core.app.NotificationManagerCompat
 import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.applicationContext
 import java.lang.reflect.Method
 
@@ -47,28 +49,36 @@ object Util {
      */
 
     fun notificationEnable(): Boolean {
-        val appInformation = applicationContext().applicationInfo
-        val packageName = applicationContext().packageName
-        val uid = appInformation.uid
-        try {
-            val notificationManager =
-                applicationContext().getSystemService(Context.NOTIFICATION_SERVICE)
-            val notificationServiceField =
-                notificationManager.javaClass.getDeclaredMethod("getService");
-            notificationServiceField.isAccessible = true
-            val service = notificationServiceField.invoke(notificationManager)
+//        val appInformation = applicationContext().applicationInfo
+//        val packageName = applicationContext().packageName
+//        val uid = appInformation.uid
+//        try {
+//            val notificationManager =
+//                applicationContext().getSystemService(Context.NOTIFICATION_SERVICE)
+//            val notificationServiceField =
+//                notificationManager.javaClass.getDeclaredMethod("getService");
+//            notificationServiceField.isAccessible = true
+//            val service = notificationServiceField.invoke(notificationManager)
+//
+//            val method = service.javaClass.getDeclaredMethod(
+//                "areNotificationEnabledForPackage",
+//                String::class.java,
+//                Int::class.java
+//            )
+//            method.isAccessible = true
+//            return method.invoke(service, packageName, uid) as Boolean
+//        } catch (exception: Exception) {
+//            exception.printStackTrace()
+//            Util.showToast("no",Toast.LENGTH_SHORT)
+//        }
+//        return false
+        return NotificationManagerCompat.from(applicationContext()).areNotificationsEnabled()
+    }
 
-            val method = service.javaClass.getDeclaredMethod(
-                "areNotificationEnabledForPackage",
-                String::class.java,
-                Int::class.java
-            )
-            method.isAccessible = true
-            return method.invoke(service, packageName, uid) as Boolean
-        } catch (exception: Exception) {
-            exception.printStackTrace()
-        }
-        return false
+    fun ignoreBatteryOptimizations(): Boolean {
+        val powerManager =
+            applicationContext().getSystemService(Context.POWER_SERVICE) as PowerManager
+        return powerManager.isIgnoringBatteryOptimizations(applicationContext().packageName)
     }
 
 
