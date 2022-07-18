@@ -160,13 +160,18 @@ class WelcomeFragment : Fragment() {
                 startActivity(intent)
             } catch (e: Exception) {
                 e.printStackTrace()
-                val intent = Intent()
-                val packageName = NotificationDrawerApplication.applicationContext().packageName
-                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                val uri = Uri.fromParts("package", packageName, null)
-                intent.data = uri
-                startActivity(intent)
-                viewModel.flushNotificationPermission()
+                try {
+                    val intent = Intent()
+                    val packageName = NotificationDrawerApplication.applicationContext().packageName
+                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    val uri = Uri.fromParts("package", packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+                } catch (exception: ActivityNotFoundException) {
+                    exception.printStackTrace()
+                    Util.showToast("跳转失败", Toast.LENGTH_SHORT)
+                    viewModel.flushNotificationPermission()
+                }
             }
 
         }
