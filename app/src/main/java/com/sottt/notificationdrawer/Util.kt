@@ -1,19 +1,19 @@
 package com.sottt.notificationdrawer
 
-import android.app.NotificationManager
 import android.content.Context
 import android.os.PowerManager
 import android.provider.Settings
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.applicationContext
-import java.lang.reflect.Method
 
 object Util {
 
 
     /**
-     * 使用Application Context展示一个Toast
+     * Show a Toast use application context
+     *
+     * @return unit
      */
     fun showToast(text: CharSequence, time: Int) {
         Toast.makeText(
@@ -31,15 +31,13 @@ object Util {
      * false :have not access notification permission
      */
     fun notificationAccessEnable(): Boolean {
-        var enable = false
         val packageName: String = applicationContext().packageName
         val flat: String =
             Settings.Secure.getString(
                 applicationContext().contentResolver,
                 "enabled_notification_listeners"
             )
-        enable = flat.contains(packageName)
-        return enable
+        return flat.contains(packageName)
     }
 
     /**
