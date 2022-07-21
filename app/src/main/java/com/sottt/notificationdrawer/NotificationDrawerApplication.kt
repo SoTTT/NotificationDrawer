@@ -10,6 +10,8 @@ class NotificationDrawerApplication : Application() {
         @SuppressLint("StaticFieldLeak")
         private lateinit var mContext: Context
 
+        var applicationLogLevel: Int = Util.LogUtil.VERBOSE
+
         fun applicationContext() = mContext
 
     }
