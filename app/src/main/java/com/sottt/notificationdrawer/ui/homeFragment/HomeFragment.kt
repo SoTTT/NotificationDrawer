@@ -13,7 +13,7 @@ class HomeFragment : Fragment() {
 
     private var _viewBinding: FragmentHomeBinding? = null
 
-    val viewBinding = _viewBinding!!
+    private val viewBinding get() = _viewBinding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

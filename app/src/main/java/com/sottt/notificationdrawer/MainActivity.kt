@@ -3,6 +3,7 @@ package com.sottt.notificationdrawer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.sottt.notificationdrawer.databinding.ActivityMainBinding
+import com.sottt.notificationdrawer.ui.homeFragment.HomeFragment
 import com.sottt.notificationdrawer.ui.welcomeFragment.WelcomeFragment
 
 class MainActivity : AppCompatActivity() {
@@ -16,7 +17,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(viewBinding.root)
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
-        transaction.replace(viewBinding.center.id, WelcomeFragment())
+        transaction.replace(
+            viewBinding.center.id, if (Util.checkAllPermission()) {
+                HomeFragment()
+            } else {
+                WelcomeFragment()
+            }
+        )
         transaction.commit()
     }
 }

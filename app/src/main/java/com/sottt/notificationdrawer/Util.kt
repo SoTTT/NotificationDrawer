@@ -81,6 +81,11 @@ object Util {
         return powerManager.isIgnoringBatteryOptimizations(applicationContext().packageName)
     }
 
+    fun checkAllPermission(): Boolean =
+        ignoreBatteryOptimizations() && notificationEnable() && notificationAccessEnable()
+
+    fun checkNecessaryPermission(): Boolean = notificationAccessEnable() && notificationEnable()
+
     object LogUtil {
 
         const val VERBOSE = 1;
