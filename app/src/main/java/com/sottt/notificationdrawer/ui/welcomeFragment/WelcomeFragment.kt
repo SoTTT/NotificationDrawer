@@ -13,9 +13,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.sottt.notificationdrawer.MainActivity
 import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.Util
 import com.sottt.notificationdrawer.databinding.FragmentWelcomeBinding
+import com.sottt.notificationdrawer.ui.homeFragment.HomeFragment
 
 
 class WelcomeFragment : Fragment() {
@@ -120,13 +122,23 @@ class WelcomeFragment : Fragment() {
         viewBinding.backstageRunningCheckBox.setOnClickListener {
             try {
                 val intent = Intent()
-                intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+                intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                intent.data =
+                    Uri.parse("package:${NotificationDrawerApplication.applicationContext().packageName}")
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context?.startActivity(intent)
             } catch (exception: ActivityNotFoundException) {
                 exception.printStackTrace()
-                Util.showToast("跳转失败", Toast.LENGTH_LONG)
-                viewModel.flushIgnoreBatteryOptimization()
+                try {
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context?.startActivity(intent)
+                } catch (exception: ActivityNotFoundException) {
+                    exception.printStackTrace()
+                    Util.showToast("跳转失败", Toast.LENGTH_LONG)
+                    viewModel.flushIgnoreBatteryOptimization()
+                }
             }
         }
 
@@ -140,7 +152,16 @@ class WelcomeFragment : Fragment() {
                 context?.startActivity(intent)
             } catch (exception: ActivityNotFoundException) {
                 exception.printStackTrace()
-                Util.showToast("跳转失败", Toast.LENGTH_LONG)
+                try {
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context?.startActivity(intent)
+                } catch (exception: ActivityNotFoundException) {
+                    exception.printStackTrace()
+                    Util.showToast("跳转失败", Toast.LENGTH_LONG)
+                    viewModel.flushIgnoreBatteryOptimization()
+                }
             }
         }
 
@@ -179,6 +200,11 @@ class WelcomeFragment : Fragment() {
         viewBinding.notificationPushPermissionCheckBox.setOnClickListener(onClick)
 
         viewBinding.notificationPushPermission.setOnClickListener(onClick)
+
+        viewBinding.fragmentReplaceButton.setOnClickListener {
+            val activity = this.activity as MainActivity
+            activity.replaceFragmentToCenterLayout(HomeFragment())
+        }
 
     }
 
