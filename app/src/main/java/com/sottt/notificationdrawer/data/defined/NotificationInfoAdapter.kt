@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import com.sottt.notificationdrawer.R
 
 class NotificationInfoAdapter(context: Context, sourceId: Int, data: List<NotificationInfo>) :
@@ -19,9 +18,8 @@ class NotificationInfoAdapter(context: Context, sourceId: Int, data: List<Notifi
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val viewHolder: ViewHolder
         val view = if (convertView != null) {
-            val view = convertView
-            viewHolder = view.tag as ViewHolder
-            view
+            viewHolder = convertView.tag as ViewHolder
+            convertView
         } else {
             val view = LayoutInflater.from(context).inflate(id, parent, false)
             viewHolder = ViewHolder(

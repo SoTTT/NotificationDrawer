@@ -6,14 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import com.sottt.notificationdrawer.MainActivity
 import com.sottt.notificationdrawer.R
+import com.sottt.notificationdrawer.Util
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import com.sottt.notificationdrawer.data.defined.NotificationInfoAdapter
 import com.sottt.notificationdrawer.databinding.FragmentHomeBinding
-import java.util.*
 
+const val TAG = "NotificationListener_SOTTT_HomeFragment"
 
 class HomeFragment : Fragment() {
 
@@ -35,6 +35,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        startService()
         iniView()
     }
 
@@ -55,6 +56,15 @@ class HomeFragment : Fragment() {
                 list
             )
         viewBinding.cardList.adapter = adapter
+    }
+
+    fun startService() {
+        if (activity == null) {
+            Util.LogUtil.w(TAG, "activity context is null!!")
+        } else {
+            val activity = activity as MainActivity
+            activity.startListenerService()
+        }
     }
 
 

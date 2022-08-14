@@ -112,19 +112,19 @@ object Util {
 
         fun i(tag: String, msg: String) {
             if (applicationLogLevel <= INFO) {
-                Log.d(tag, msg)
+                Log.i(tag, msg)
             }
         }
 
         fun w(tag: String, msg: String) {
             if (applicationLogLevel <= WARNING) {
-                Log.d(tag, msg)
+                Log.w(tag, msg)
             }
         }
 
         fun e(tag: String, msg: String) {
             if (applicationLogLevel <= ERROR) {
-                Log.d(tag, msg)
+                Log.e(tag, msg)
             }
         }
 
