@@ -12,6 +12,7 @@ import com.sottt.notificationdrawer.Util
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import com.sottt.notificationdrawer.data.defined.NotificationInfoAdapter
 import com.sottt.notificationdrawer.databinding.FragmentHomeBinding
+import java.util.*
 
 const val TAG = "NotificationListener_SOTTT_HomeFragment"
 
@@ -47,7 +48,13 @@ class HomeFragment : Fragment() {
     private fun iniView() {
         val list = mutableListOf<NotificationInfo>()
         for (index in 1..10) {
-            list.add(NotificationInfo("123", "123456".repeat((Math.random() * 100).toInt())))
+            list.add(
+                NotificationInfo(
+                    "123",
+                    "123456".repeat((Math.random() * 100).toInt()) + Date().toString(),
+                    Date().toString()
+                )
+            )
         }
         val adapter =
             NotificationInfoAdapter(
