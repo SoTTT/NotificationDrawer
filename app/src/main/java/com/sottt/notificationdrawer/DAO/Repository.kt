@@ -22,12 +22,14 @@ object Repository {
 
     fun loadActiveNotification(list: List<NotificationInfo>) {
         _activeNotification.postValue(list)
+        storeAllNotification(list)
     }
 
     fun addActiveNotification(item: NotificationInfo) {
         val mutableList = activeNotification.value?.toMutableList()
         mutableList?.add(item)
         loadActiveNotification(mutableList?.toList()!!)
+        storeNotification(item)
     }
 
     fun removeActiveNotification(id: Int?) {

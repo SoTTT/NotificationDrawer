@@ -19,4 +19,5 @@ interface NotificationDao {
     @Delete
     fun deleteNotification(notification: NotificationInfo)
 
+
 }
