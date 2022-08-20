@@ -14,11 +14,20 @@ import com.sottt.notificationdrawer.data.defined.NotificationInfo
 
 object Util {
 
+    fun createNullNotification(): NotificationInfo {
+        return NotificationInfo(
+            "null",
+            "null",
+            "null",
+            0
+        )
+    }
+
     fun StatusBarNotification.toNotificationInfo(): NotificationInfo {
         val bundle = this.notification.extras
         val text = bundle.getString(Notification.EXTRA_TEXT)
         val title = bundle.getString(Notification.EXTRA_TITLE)
-        return NotificationInfo(title ?: "", text ?: "", postTime.toString())
+        return NotificationInfo(title ?: "", text ?: "", postTime.toString(), this.id)
     }
 
     /**

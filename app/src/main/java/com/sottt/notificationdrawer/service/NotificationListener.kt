@@ -15,6 +15,7 @@ import com.sottt.notificationdrawer.DAO.Repository
 import com.sottt.notificationdrawer.MainActivity
 import com.sottt.notificationdrawer.R
 import com.sottt.notificationdrawer.Util.LogUtil
+import com.sottt.notificationdrawer.Util.createNullNotification
 import com.sottt.notificationdrawer.Util.toNotificationInfo
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import java.lang.Thread.sleep
@@ -38,7 +39,7 @@ class NotificationListener : NotificationListenerService() {
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        LogUtil.d(
+        LogUtil.v(
             TAG,
             "onListenerConnected: NotificationListener be connected to notification manager"
         )
@@ -80,24 +81,20 @@ class NotificationListener : NotificationListenerService() {
         val list = activeNotifications.toList()
         LogUtil.d(TAG, "onNotificationPosted: size of activeNotification is ${list.size}")
         Repository.addActiveNotification(
-            sbn?.toNotificationInfo() ?: NotificationInfo(
-                "null",
-                "null",
-                "null"
-            )
+            sbn?.toNotificationInfo() ?: createNullNotification()
         )
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
         super.onNotificationRemoved(sbn)
-        LogUtil.d(TAG, "onNotificationRemoved: ")
+        LogUtil.d(TAG, "onNotificationRemoved: id=${sbn?.id}")
+        Repository.removeActiveNotification(sbn?.id)
     }
 
     override fun onCreate() {
         super.onCreate()
         LogUtil.d(TAG, "onCreate: service be created")
         useForeground()
-
     }
 
     private fun useForeground() {
