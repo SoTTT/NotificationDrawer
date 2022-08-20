@@ -7,14 +7,16 @@ import com.sottt.notificationdrawer.data.defined.NotificationInfo
 
 class HomeFragmentViewModel : ViewModel() {
 
-    private val _adapterData = MutableLiveData<List<NotificationInfo>>().apply {
-        TODO("7.24")
-    }
+    private val _adapterData = MutableLiveData<List<NotificationInfo>>()
 
     val adapterData = _adapterData
 
     fun flushNotification() {
-        TODO("7.24")
+
+    }
+
+    fun setCurrentNotification(list: List<NotificationInfo>) {
+        _adapterData.value = list
     }
 
 }

@@ -1,5 +1,6 @@
 package com.sottt.notificationdrawer
 
+import android.app.Notification
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -7,15 +8,26 @@ import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
+import android.service.notification.StatusBarNotification
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.tabs.TabLayout
+import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import com.sottt.notificationdrawer.databinding.ActivityMainBinding
 import com.sottt.notificationdrawer.service.NotificationListener
 import com.sottt.notificationdrawer.ui.homeFragment.HomeFragment
+import com.sottt.notificationdrawer.ui.homeFragment.HomeFragmentViewModel
 import com.sottt.notificationdrawer.ui.welcomeFragment.WelcomeFragment
-import kotlin.reflect.KClass
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "NOTIFICATION_MAIN_ACTIVITY"
+    }
+
+    private val viewModel by lazy {
+        ViewModelProvider(this).get(HomeFragmentViewModel::class.java)
+    }
 
     private val viewBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -25,13 +37,20 @@ class MainActivity : AppCompatActivity() {
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-
+            Util.LogUtil.d(TAG, "MainActivity: service bind")
+            notificationListenerBinder = service as NotificationListener.NotificationListenBinder
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
 
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindListenerService()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +65,7 @@ class MainActivity : AppCompatActivity() {
             }
         )
         transaction.commit()
+        Util.LogUtil.d(TAG, "MainActivity Created")
     }
 
 
@@ -62,7 +82,7 @@ class MainActivity : AppCompatActivity() {
 
     fun startListenerService() {
         val intent = Intent(this, NotificationListener::class.java)
-        startService(intent)
+        startForegroundService(intent)
     }
 
     fun stopListenerService() {

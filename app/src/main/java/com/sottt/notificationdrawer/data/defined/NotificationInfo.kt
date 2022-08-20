@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import java.util.*
 
 @Entity
-class NotificationInfo(var title: String, var content: String, var time: String) {
+data class NotificationInfo(var title: String, var content: String, var time: String) {
 
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
