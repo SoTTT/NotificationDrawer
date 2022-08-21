@@ -11,6 +11,8 @@ class HomeFragmentViewModel : ViewModel() {
 
     val adapterData = _adapterData
 
+    var newStatus: Int? = null
+
     fun flushNotification() {
 
     }

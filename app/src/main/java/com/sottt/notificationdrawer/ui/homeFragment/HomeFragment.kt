@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.sottt.notificationdrawer.DAO.Repository
 import com.sottt.notificationdrawer.MainActivity
 import com.sottt.notificationdrawer.R
@@ -21,6 +23,10 @@ class HomeFragment : Fragment() {
 
     companion object {
         const val TAG = "NotificationListener_SOTTT_HomeFragment"
+    }
+
+    private val bottomSheetBehavior by lazy {
+        BottomSheetBehavior.from(viewBinding.bottomSheet)
     }
 
     private val viewModel by lazy {
@@ -76,9 +82,35 @@ class HomeFragment : Fragment() {
             adapter.addAll(it)
         }
         viewBinding.cardList.adapter = adapter
+
+        viewModel.newStatus = bottomSheetBehavior.state
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+        })
+
+        viewBinding.cardList.setOnItemClickListener { parent, view, position, id ->
+            Util.LogUtil.d(TAG, "view clicked : position is $position")
+            val item = viewModel.adapterData.value?.elementAt(position)
+            viewBinding.inner.let {
+                it.notificationTitle.text = item?.title
+                it.notificationContent.text = item?.content
+                it.notificationTime.text = item?.time
+            }
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
     }
 
-    fun startService() {
+    private fun startService() {
         if (activity == null) {
             Util.LogUtil.w(TAG, "activity context is null!!")
         } else {
