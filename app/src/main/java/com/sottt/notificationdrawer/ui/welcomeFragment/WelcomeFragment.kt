@@ -202,8 +202,8 @@ class WelcomeFragment : Fragment() {
         viewBinding.notificationPushPermission.setOnClickListener(onClick)
 
         viewBinding.fragmentReplaceButton.setOnClickListener {
-            val activity = this.activity as MainActivity
-            activity.replaceFragmentToCenterLayout(HomeFragment())
+            val intent = Intent(this.activity, MainActivity::class.java)
+            startActivity(intent)
         }
 
     }

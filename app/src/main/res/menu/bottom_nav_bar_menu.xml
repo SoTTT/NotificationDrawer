@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/homeFragment"
+        android:title="通知"
+        tools:ignore="HardcodedText" />
+
+    <item
+        android:id="@+id/statisticalFragment"
+        android:title="统计"
+        tools:ignore="HardcodedText" />
+</menu>

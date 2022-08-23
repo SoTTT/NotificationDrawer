@@ -63,28 +63,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun iniView() {
-        Repository.activeNotification.observe(this.viewLifecycleOwner) {
-            viewModel.setCurrentNotification(it)
-        }
-        val list = mutableListOf<NotificationInfo>()
-        val adapter =
-            NotificationInfoAdapter(
-                this.activity as MainActivity,
-                R.layout.notification_card,
-                list
-            )
-        viewModel.adapterData.observe(this.viewLifecycleOwner) {
-            Util.LogUtil.d(TAG, it.size.toString())
-            for (item in it) {
-                Util.LogUtil.d(TAG, item.toString())
-            }
-            adapter.clear()
-            adapter.addAll(it)
-        }
-        viewBinding.cardList.adapter = adapter
+        addNotificationListSyncs()
 
-        viewModel.newStatus = bottomSheetBehavior.state
+        iniBottomSheetStatus()
 
+        iniBottomSheetCallback()
+    }
+
+    private fun iniBottomSheetCallback() {
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -108,6 +94,32 @@ class HomeFragment : Fragment() {
             }
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
+    }
+
+    private fun iniBottomSheetStatus() {
+        viewModel.newStatus = bottomSheetBehavior.state
+    }
+
+    private fun addNotificationListSyncs() {
+        Repository.activeNotification.observe(this.viewLifecycleOwner) {
+            viewModel.setCurrentNotification(it)
+        }
+        val list = mutableListOf<NotificationInfo>()
+        val adapter =
+            NotificationInfoAdapter(
+                this.activity as MainActivity,
+                R.layout.notification_card,
+                list
+            )
+        viewModel.adapterData.observe(this.viewLifecycleOwner) {
+            Util.LogUtil.d(TAG, it.size.toString())
+            for (item in it) {
+                Util.LogUtil.d(TAG, item.toString())
+            }
+            adapter.clear()
+            adapter.addAll(it)
+        }
+        viewBinding.cardList.adapter = adapter
     }
 
     private fun startService() {

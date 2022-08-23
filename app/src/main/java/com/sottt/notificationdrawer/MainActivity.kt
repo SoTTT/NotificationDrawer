@@ -1,23 +1,21 @@
 package com.sottt.notificationdrawer
 
-import android.app.Notification
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
-import android.service.notification.StatusBarNotification
+import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.tabs.TabLayout
-import com.sottt.notificationdrawer.data.defined.NotificationInfo
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import com.sottt.notificationdrawer.databinding.ActivityMainBinding
 import com.sottt.notificationdrawer.service.NotificationListener
-import com.sottt.notificationdrawer.ui.homeFragment.HomeFragment
 import com.sottt.notificationdrawer.ui.homeFragment.HomeFragmentViewModel
-import com.sottt.notificationdrawer.ui.welcomeFragment.WelcomeFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,17 +53,39 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
-        val fragmentManager = supportFragmentManager
-        val transaction = fragmentManager.beginTransaction()
-        transaction.replace(
-            viewBinding.center.id, if (Util.checkNecessaryPermission()) {
-                HomeFragment()
-            } else {
-                WelcomeFragment()
-            }
-        )
-        transaction.commit()
         Util.LogUtil.d(TAG, "MainActivity Created")
+//        val fragmentManager = supportFragmentManager
+//        val transaction = fragmentManager.beginTransaction()
+//        transaction.replace(
+//            viewBinding.center.id, HomeFragment()
+//        )
+//        transaction.commit()
+
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        if (Util.checkNecessaryPermission()) {
+
+        } else {
+            unbindListenerService()
+            stopListenerService()
+            val intent = Intent(this, WelcomeActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val navView = viewBinding.nav
+        val navController = findNavController(R.id.main_activity_center)
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.homeFragment, R.id.statisticalFragment
+            )
+        )
+        navView.setupWithNavController(navController)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
 
@@ -77,7 +97,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun replaceFragmentToCenterLayout(fragment: Fragment) {
-        replaceFragmentTo(viewBinding.center.id, fragment)
+        replaceFragmentTo(viewBinding.mainActivityCenter.id, fragment)
     }
 
     fun startListenerService() {
