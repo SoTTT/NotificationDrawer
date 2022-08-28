@@ -2,6 +2,7 @@ package com.sottt.notificationdrawer
 
 import android.app.Notification
 import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.os.Looper
 import android.os.PowerManager
 import android.provider.Settings
@@ -12,6 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.applicationContext
 import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.applicationLogLevel
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
+import java.util.*
 
 object Util {
 
@@ -29,10 +31,14 @@ object Util {
         val bundle = this.notification.extras
         val text = bundle.getString(Notification.EXTRA_TEXT)
         val title = bundle.getString(Notification.EXTRA_TITLE)
+        val timeLong = this.postTime
+        val timeFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val date = Date(timeLong)
+        val formatTime = timeFormatter.format(date)
         return NotificationInfo(
             title ?: "",
             text ?: "",
-            postTime.toString(),
+            formatTime,
             this.id,
             this.packageName
         )
