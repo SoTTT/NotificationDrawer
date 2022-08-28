@@ -2,6 +2,7 @@ package com.sottt.notificationdrawer
 
 import android.app.Notification
 import android.content.Context
+import android.os.Looper
 import android.os.PowerManager
 import android.provider.Settings
 import android.service.notification.StatusBarNotification
@@ -19,7 +20,8 @@ object Util {
             "null",
             "null",
             "null",
-            0
+            0,
+            "null"
         )
     }
 
@@ -27,7 +29,13 @@ object Util {
         val bundle = this.notification.extras
         val text = bundle.getString(Notification.EXTRA_TEXT)
         val title = bundle.getString(Notification.EXTRA_TITLE)
-        return NotificationInfo(title ?: "", text ?: "", postTime.toString(), this.id)
+        return NotificationInfo(
+            title ?: "",
+            text ?: "",
+            postTime.toString(),
+            this.id,
+            this.packageName
+        )
     }
 
     /**
@@ -67,29 +75,6 @@ object Util {
      */
 
     fun notificationEnable(): Boolean {
-//        val appInformation = applicationContext().applicationInfo
-//        val packageName = applicationContext().packageName
-//        val uid = appInformation.uid
-//        try {
-//            val notificationManager =
-//                applicationContext().getSystemService(Context.NOTIFICATION_SERVICE)
-//            val notificationServiceField =
-//                notificationManager.javaClass.getDeclaredMethod("getService");
-//            notificationServiceField.isAccessible = true
-//            val service = notificationServiceField.invoke(notificationManager)
-//
-//            val method = service.javaClass.getDeclaredMethod(
-//                "areNotificationEnabledForPackage",
-//                String::class.java,
-//                Int::class.java
-//            )
-//            method.isAccessible = true
-//            return method.invoke(service, packageName, uid) as Boolean
-//        } catch (exception: Exception) {
-//            exception.printStackTrace()
-//            Util.showToast("no",Toast.LENGTH_SHORT)
-//        }
-//        return false
         return NotificationManagerCompat.from(applicationContext()).areNotificationsEnabled()
     }
 
@@ -148,5 +133,8 @@ object Util {
 
     }
 
+    fun isMainThread(): Boolean {
+        return Looper.getMainLooper() === Looper.myLooper()
+    }
 
 }

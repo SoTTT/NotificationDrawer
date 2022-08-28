@@ -6,13 +6,17 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.view.View
 import android.view.WindowManager
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.sottt.notificationdrawer.databinding.ActivityMainBinding
 import com.sottt.notificationdrawer.service.NotificationListener
 import com.sottt.notificationdrawer.ui.homeFragment.HomeFragmentViewModel
@@ -30,6 +34,9 @@ class MainActivity : AppCompatActivity() {
     private val viewBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
+    private lateinit var behavior: BottomSheetBehavior<View>
+    private lateinit var dialog: BottomSheetDialog
 
     lateinit var notificationListenerBinder: NotificationListener.NotificationListenBinder
 
@@ -65,9 +72,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRestart() {
         super.onRestart()
-        if (Util.checkNecessaryPermission()) {
-
-        } else {
+        if (!Util.checkNecessaryPermission()) {
             unbindListenerService()
             stopListenerService()
             val intent = Intent(this, WelcomeActivity::class.java)
@@ -86,8 +91,58 @@ class MainActivity : AppCompatActivity() {
         )
         navView.setupWithNavController(navController)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        iniBottomSheetDialogCallback()
     }
 
+    private fun iniBottomSheetDialogCallback() {
+        dialog = BottomSheetDialog(this)
+        val view =
+            layoutInflater.inflate(R.layout.notification_information_bottom_sheet_layout, null)
+        dialog.setContentView(view)
+        behavior = BottomSheetBehavior.from(view.parent as View)
+        behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        Util.LogUtil.v(TAG, "new Status: BottomSheetBehavior.STATE_EXPANDED")
+                    }
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        Util.LogUtil.v(TAG, "new Status: BottomSheetBehavior.STATE_HIDDEN")
+                    }
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        Util.LogUtil.v(TAG, "new Status: BottomSheetBehavior.STATE_COLLAPSED")
+                    }
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+                        Util.LogUtil.v(TAG, "new Status: BottomSheetBehavior.STATE_DRAGGING")
+                    }
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+                        Util.LogUtil.v(TAG, "new Status: BottomSheetBehavior.STATE_HALF_EXPANDED")
+                    }
+                    BottomSheetBehavior.STATE_SETTLING -> {
+                        Util.LogUtil.v(TAG, "new Status: BottomSheetBehavior.STATE_SETTLING")
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+        })
+    }
+
+    fun showBottomSheetDialog(bundle: Bundle) {
+        val title = bundle.getString("TITLE")
+        val content = bundle.getString("CONTENT")
+        val time = bundle.getString("TIME")
+        val packageName = bundle.getString("PACKAGE_NAME")
+        dialog.apply {
+            findViewById<TextView>(R.id.notification_title)?.text = title
+            findViewById<TextView>(R.id.notification_content)?.text = content
+            findViewById<TextView>(R.id.notification_time)?.text = time
+            findViewById<TextView>(R.id.notification_package_name)?.text = packageName
+        }
+        dialog.show()
+    }
 
     fun replaceFragmentTo(id: Int, fragment: Fragment) {
         val fragmentManager = supportFragmentManager

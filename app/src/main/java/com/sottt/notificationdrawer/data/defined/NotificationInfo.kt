@@ -9,7 +9,8 @@ data class NotificationInfo(
     var title: String,
     var content: String,
     var time: String,
-    var notificationId: Int
+    var notificationId: Int,
+    var packageName: String
 ) {
 
     @PrimaryKey(autoGenerate = true)
