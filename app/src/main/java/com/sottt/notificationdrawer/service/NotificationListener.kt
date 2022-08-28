@@ -3,8 +3,10 @@ package com.sottt.notificationdrawer.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Binder
 import android.os.IBinder
@@ -132,7 +134,26 @@ class NotificationListener : NotificationListenerService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         LogUtil.d(TAG, "onStartCommand")
+        toggleNotificationListenerService()
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun toggleNotificationListenerService() {
+        val pm = packageManager
+        pm.setComponentEnabledSetting(
+            ComponentName(
+                this,
+                NotificationListener::class.java
+            ),
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP
+        )
+        pm.setComponentEnabledSetting(
+            ComponentName(
+                this,
+                NotificationListener::class.java
+            ),
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
+        )
     }
 
 }
