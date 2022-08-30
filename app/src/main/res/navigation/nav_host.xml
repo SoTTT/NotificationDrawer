@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/statisticalFragment"
-        android:name="com.sottt.notificationdrawer.ui.StatisticalFragment.StatisticalFragment"
+        android:name="com.sottt.notificationdrawer.ui.statisticalFragment.StatisticalFragment"
         android:label="fragment_statistical"
         tools:layout="@layout/fragment_statistical" />
 </navigation>

@@ -3,7 +3,7 @@ package com.sottt.notificationdrawer
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import com.sottt.notificationdrawer.DAO.Repository
+import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.data.defined.ApplicationPermissionStatus
 import com.sottt.notificationdrawer.data.defined.ApplicationSettings
 

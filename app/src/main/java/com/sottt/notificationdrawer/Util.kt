@@ -23,6 +23,7 @@ object Util {
             "null",
             "null",
             0,
+            "null",
             "null"
         )
     }
@@ -40,7 +41,8 @@ object Util {
             text ?: "",
             formatTime,
             this.id,
-            this.packageName
+            this.packageName,
+            this.key
         )
     }
 
@@ -141,6 +143,10 @@ object Util {
 
     fun isMainThread(): Boolean {
         return Looper.getMainLooper() === Looper.myLooper()
+    }
+
+    object ColorUtil {
+
     }
 
 }

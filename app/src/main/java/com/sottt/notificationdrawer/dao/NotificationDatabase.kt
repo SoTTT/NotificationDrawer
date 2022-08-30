@@ -1,13 +1,12 @@
-package com.sottt.notificationdrawer.DAO
+package com.sottt.notificationdrawer.dao
 
-import android.app.Notification
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 
-@Database(version = 1, entities = [NotificationInfo::class])
+@Database(version = 1, entities = [NotificationInfo::class], exportSchema = false)
 abstract class NotificationDatabase : RoomDatabase() {
 
     abstract fun NotificationDao(): NotificationDao

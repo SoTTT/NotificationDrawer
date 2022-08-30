@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
@@ -13,15 +12,14 @@ import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import androidx.core.app.NotificationCompat
-import com.sottt.notificationdrawer.DAO.Repository
+import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.MainActivity
 import com.sottt.notificationdrawer.R
 import com.sottt.notificationdrawer.Util.LogUtil
 import com.sottt.notificationdrawer.Util.createNullNotification
 import com.sottt.notificationdrawer.Util.toNotificationInfo
-import com.sottt.notificationdrawer.data.defined.NotificationInfo
-import java.lang.Thread.sleep
-import kotlin.concurrent.thread
+import com.sottt.notificationdrawer.filter.FilterCollection
+import com.sottt.notificationdrawer.filter.NotificationFilterHandler
 
 
 class NotificationListener : NotificationListenerService() {
@@ -32,12 +30,25 @@ class NotificationListener : NotificationListenerService() {
 
     private val mBinder = NotificationListenBinder()
 
+    val isFilterValid: Boolean get() = (filterHandler as NotificationFilterHandler).isValid
+
     inner class NotificationListenBinder : Binder() {
 
         fun getNotification() = activeNotifications.toList()
 
+        fun cancelNotification(key: String) {
+            cancelOneNotification(key)
+        }
+
     }
 
+    private val filterHandler: FilterCollection by lazy {
+        NotificationFilterHandler()
+    }
+
+    private fun cancelOneNotification(key: String) {
+        super.cancelNotification(key)
+    }
 
     override fun onListenerConnected() {
         super.onListenerConnected()
@@ -45,6 +56,7 @@ class NotificationListener : NotificationListenerService() {
             TAG,
             "onListenerConnected: NotificationListener be connected to notification manager"
         )
+        iniNotificationFilterHandler()
         val list = activeNotifications.toList()
         Repository.loadActiveNotification(list.map {
             it.toNotificationInfo()
@@ -154,6 +166,10 @@ class NotificationListener : NotificationListenerService() {
             ),
             PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP
         )
+    }
+
+    private fun iniNotificationFilterHandler() {
+
     }
 
 }

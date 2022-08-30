@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.sottt.notificationdrawer.DAO.Repository
+import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.MainActivity
 import com.sottt.notificationdrawer.R
 import com.sottt.notificationdrawer.Util

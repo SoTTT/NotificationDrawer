@@ -1,7 +1,9 @@
 package com.sottt.notificationdrawer.filter
 
-abstract class AbstractFilter : Checkable {
+import java.io.Serializable
+
+abstract class AbstractFilter : Checkable, Serializable, Cloneable {
 
     var tag: String = ""
-
+    var valid: Boolean = true
 }
