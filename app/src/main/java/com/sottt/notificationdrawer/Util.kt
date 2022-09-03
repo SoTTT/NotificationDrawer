@@ -1,8 +1,16 @@
 package com.sottt.notificationdrawer
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.content.Context
+import android.content.pm.PackageManager
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.icu.text.SimpleDateFormat
+import android.os.Build
 import android.os.Looper
 import android.os.PowerManager
 import android.provider.Settings
@@ -15,6 +23,7 @@ import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.appl
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import java.util.*
 
+
 object Util {
 
     fun createNullNotification(): NotificationInfo {
@@ -26,6 +35,44 @@ object Util {
             "null",
             "null"
         )
+    }
+
+    @SuppressLint("ObsoleteSdkInt", "UseCompatLoadingForDrawables")
+    fun getApplicationIconId(packageName: String, context: Context): Bitmap {
+        synchronized(this) {
+            val packageManager = context.packageManager
+            val otherContext =
+                context.createPackageContext(
+                    packageName,
+                    Context.CONTEXT_IGNORE_SECURITY
+                )
+            val applicationInfo =
+                packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+            val resources = packageManager.getResourcesForApplication(applicationInfo)
+            val id = applicationInfo.icon
+
+            val bitmap = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                val vectorDrawable: Drawable? =
+                    otherContext.resources.getDrawable(id, otherContext.theme)
+                if (otherContext == null) {
+                    throw Resources.NotFoundException()
+                } else {
+                    vectorDrawable as Drawable
+                    val bitmap = Bitmap.createBitmap(
+                        vectorDrawable.intrinsicWidth,
+                        vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap)
+                    vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
+                    vectorDrawable.draw(canvas)
+                    bitmap
+                }
+
+            } else {
+                BitmapFactory.decodeResource(resources, id)
+            }
+            return bitmap
+        }
     }
 
     fun StatusBarNotification.toNotificationInfo(): NotificationInfo {
@@ -42,7 +89,8 @@ object Util {
             formatTime,
             this.id,
             this.packageName,
-            this.key
+            this.key,
+            getApplicationIconId(this.packageName, applicationContext())
         )
     }
 
