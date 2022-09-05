@@ -4,10 +4,14 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.IBinder
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -19,6 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.sottt.notificationdrawer.databinding.ActivityMainBinding
 import com.sottt.notificationdrawer.service.NotificationListener
+import com.sottt.notificationdrawer.setting.SettingActivity
 import com.sottt.notificationdrawer.ui.homeFragment.HomeFragmentViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -92,6 +97,33 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         iniBottomSheetDialogCallback()
+        setSupportActionBar(viewBinding.toolbar)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_activity_tool_bar_actions, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.filter -> {
+                val intent = Intent(this, SettingActivity::class.java)
+                intent.putExtra("PAGE", SettingActivity.FILTER_PAGE)
+                startActivity(intent)
+            }
+            R.id.setting -> {
+                val intent = Intent(this, SettingActivity::class.java)
+                intent.putExtra("PAGE", SettingActivity.SETTINGS_PAGE)
+                startActivity(intent)
+            }
+            R.id.history -> {
+                val intent = Intent(this, SettingActivity::class.java)
+                intent.putExtra("PAGE", SettingActivity.HISTORY_PAGE)
+                startActivity(intent)
+            }
+        }
+        return true
     }
 
     private fun iniBottomSheetDialogCallback() {
@@ -135,11 +167,13 @@ class MainActivity : AppCompatActivity() {
         val content = bundle.getString("CONTENT")
         val time = bundle.getString("TIME")
         val packageName = bundle.getString("PACKAGE_NAME")
+        val icon = bundle.getParcelable<Bitmap>("ICON")
         dialog.apply {
             findViewById<TextView>(R.id.notification_title)?.text = title
             findViewById<TextView>(R.id.notification_content)?.text = content
             findViewById<TextView>(R.id.notification_time)?.text = time
             findViewById<TextView>(R.id.notification_package_name)?.text = packageName
+            findViewById<ImageView>(R.id.information_bottom_sheet_icon)?.setImageBitmap(icon)
         }
         dialog.show()
     }

@@ -1,57 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/information_bottom_sheet_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/notification_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            android:maxWidth="200dp"
+            android:maxLines="1"
             android:text="@string/test_string"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@+id/notification_time"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/information_bottom_sheet_icon"
+            app:layout_constraintStart_toEndOf="@+id/information_bottom_sheet_icon"
+            app:layout_constraintTop_toTopOf="@+id/information_bottom_sheet_icon" />
 
         <TextView
             android:id="@+id/notification_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:text="@string/test_string"
-            app:layout_constraintStart_toStartOf="@+id/notification_title"
-            app:layout_constraintTop_toBottomOf="@+id/notification_title" />
+            app:layout_constraintBottom_toBottomOf="@+id/notification_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/notification_title" />
 
         <TextView
             android:id="@+id/notification_package_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:text="@string/test_string"
-            app:layout_constraintStart_toStartOf="@+id/notification_time"
-            app:layout_constraintTop_toBottomOf="@+id/notification_time" />
+            app:layout_constraintStart_toStartOf="@+id/information_bottom_sheet_icon"
+            app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
         <TextView
             android:id="@+id/notification_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="9dp"
             android:text="@string/test_string"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/notification_package_name"
+            app:layout_constraintStart_toStartOf="@+id/information_bottom_sheet_icon"
             app:layout_constraintTop_toBottomOf="@+id/notification_package_name" />
 
 
-    </LinearLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="79dp" />
+
+        <ExpandableListView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:tooltipText="123"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/notification_content"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.core.widget.NestedScrollView>

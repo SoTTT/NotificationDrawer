@@ -74,6 +74,7 @@ class HomeFragment : Fragment() {
                     putString("CONTENT", item.title)
                     putString("TIME", item.time)
                     putString("PACKAGE_NAME", item.packageName)
+                    putParcelable("ICON", item.smallIcon)
                 }
                 val activity = activity as MainActivity
                 activity.showBottomSheetDialog(bundle)

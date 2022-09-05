@@ -1,0 +1,51 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Application">
+
+        <ListPreference
+            app:defaultValue="language_chinese"
+            app:entries="@array/language"
+            app:entryValues="@array/language_value"
+            app:key="language"
+            app:title="application language"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="theme_light"
+            app:entries="@array/theme"
+            app:entryValues="@array/theme_value"
+            app:key="theme"
+            app:title="theme"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Global Filter">
+
+        <SwitchPreferenceCompat
+            android:summary="turn on or off all notification filter"
+            app:defaultValue="true"
+            app:key="use_filter"
+            app:title="use filter" />
+
+        <Preference
+            android:key="all_filter"
+            app:title="show all filter" />
+
+        <Preference
+            app:key="export_all_filter"
+            app:title="export all filter" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="soft">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="biometric_identifiers"
+            app:title="use biometric identifiers" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
