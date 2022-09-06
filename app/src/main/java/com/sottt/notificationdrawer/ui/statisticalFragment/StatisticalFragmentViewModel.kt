@@ -11,6 +11,7 @@ import com.github.mikephil.charting.data.PieEntry
 import com.sottt.notificationdrawer.Util
 import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
+import com.sottt.notificationdrawer.filter.AbstractFilter
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.thread
 
@@ -19,6 +20,11 @@ class StatisticalFragmentViewModel() : ViewModel() {
     data class PackageData(val list: List<NotificationInfo>, val name: String, val count: Int) {
 
     }
+
+    private val _classificationNotification =
+        MutableLiveData<HashMap<String, ArrayList<NotificationInfo>>>()
+
+    val classificationNotification = _classificationNotification
 
     private val lock = ReentrantLock()
 
@@ -73,5 +79,20 @@ class StatisticalFragmentViewModel() : ViewModel() {
 
     fun getDataCountFromDao(): Int {
         return Repository.getNotificationCount().get()
+    }
+
+    fun createClassificationNotification(): HashMap<String, ArrayList<NotificationInfo>> {
+        val future = Repository.getPackageNameAndCount()
+        val packageNameAndCount = future.get()
+        val map = HashMap<String, ArrayList<NotificationInfo>>()
+        for (item in packageNameAndCount) {
+            val packageName = item.name
+            if (packageName != null) {
+                val allNoFuture = Repository.getNotificationRecordWithPackageName(packageName)
+                val notifications = allNoFuture.get() as ArrayList
+                map[packageName] = notifications
+            }
+        }
+        return map
     }
 }

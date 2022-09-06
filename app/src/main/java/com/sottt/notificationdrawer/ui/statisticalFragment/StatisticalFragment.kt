@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.mikephil.charting.components.Description
+import com.google.android.material.tabs.TabLayoutMediator
+import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.databinding.FragmentStatisticalBinding
 
 
@@ -36,9 +39,10 @@ class StatisticalFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         iniCharts()
         viewModel.loadPieChartsData()
+        iniViewPager(this)
     }
 
-    fun iniCharts() {
+    private fun iniCharts() {
         val pieChart = viewBinding.charts
         viewModel.pieChartsDataSet.observe(viewLifecycleOwner) {
             pieChart.data = it
@@ -50,5 +54,24 @@ class StatisticalFragment : Fragment() {
         }
     }
 
+    private fun iniViewPager(fragment: Fragment) {
+        val map = viewModel.createClassificationNotification()
+        val packageNames = map.keys.toList()
+        val appNames = packageNames.map {
+            NotificationDrawerApplication.getAppName(it)
+        }
+        val viewPagerAdapter = ViewPagerAdapter(fragment, map)
+        val viewPager = viewBinding.pager
+        viewPager.adapter = viewPagerAdapter
+        TabLayoutMediator(viewBinding.tabLayout, viewPager) { tab, position ->
+            tab.text = appNames[position]
+        }.attach()
+    }
+
+    private fun iniCardList() {
+        viewModel.classificationNotification.observe(this) {
+
+        }
+    }
 
 }

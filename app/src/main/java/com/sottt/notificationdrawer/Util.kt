@@ -3,6 +3,7 @@ package com.sottt.notificationdrawer
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -20,8 +21,10 @@ import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
 import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.applicationContext
 import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.applicationLogLevel
+import com.sottt.notificationdrawer.data.defined.ApplicationCoreInfo
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import java.util.*
+import kotlin.collections.HashMap
 
 
 object Util {
@@ -38,41 +41,41 @@ object Util {
     }
 
     @SuppressLint("ObsoleteSdkInt", "UseCompatLoadingForDrawables")
-    fun getApplicationIconId(packageName: String, context: Context): Bitmap {
-        synchronized(this) {
-            val packageManager = context.packageManager
-            val otherContext =
-                context.createPackageContext(
-                    packageName,
-                    Context.CONTEXT_IGNORE_SECURITY
-                )
-            val applicationInfo =
-                packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
-            val resources = packageManager.getResourcesForApplication(applicationInfo)
-            val id = applicationInfo.icon
-
-            val bitmap = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                val vectorDrawable: Drawable? =
-                    otherContext.resources.getDrawable(id, otherContext.theme)
-                if (otherContext == null) {
-                    throw Resources.NotFoundException()
-                } else {
-                    vectorDrawable as Drawable
-                    val bitmap = Bitmap.createBitmap(
-                        vectorDrawable.intrinsicWidth,
-                        vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888
-                    )
-                    val canvas = Canvas(bitmap)
-                    vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
-                    vectorDrawable.draw(canvas)
-                    bitmap
-                }
-
-            } else {
-                BitmapFactory.decodeResource(resources, id)
-            }
-            return bitmap
+    fun getApplicationIcon(packageName: String, context: Context): Bitmap {
+        val packageManager = context.packageManager
+        val otherContext =
+            context.createPackageContext(
+                packageName,
+                Context.CONTEXT_IGNORE_SECURITY
+            )
+        val applicationInfo =
+            packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
+        val resources = packageManager.getResourcesForApplication(applicationInfo)
+        val id = applicationInfo.icon
+        if (id == 0) {
+            TODO("我不知道怎么写")
         }
+        val bitmap = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            val vectorDrawable: Drawable? =
+                otherContext.resources.getDrawable(id, otherContext.theme)
+            if (otherContext == null) {
+                throw Resources.NotFoundException()
+            } else {
+                vectorDrawable as Drawable
+                val bitmap = Bitmap.createBitmap(
+                    vectorDrawable.intrinsicWidth,
+                    vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888
+                )
+                val canvas = Canvas(bitmap)
+                vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
+                vectorDrawable.draw(canvas)
+                bitmap
+            }
+
+        } else {
+            BitmapFactory.decodeResource(resources, id)
+        }
+        return bitmap
     }
 
     fun StatusBarNotification.toNotificationInfo(): NotificationInfo {
@@ -90,7 +93,7 @@ object Util {
             this.id,
             this.packageName,
             this.key,
-            getApplicationIconId(this.packageName, applicationContext())
+            getApplicationIcon(this.packageName, applicationContext())
         )
     }
 
@@ -195,6 +198,28 @@ object Util {
 
     object ColorUtil {
 
+    }
+
+    fun packageNameToAppName(context: Context): HashMap<String, ApplicationCoreInfo> {
+        val packageInfoList = context.packageManager.getInstalledPackages(
+            PackageManager.GET_ACTIVITIES or
+                    PackageManager.GET_SERVICES
+        )
+        val appCoreInfo = packageInfoList.map<PackageInfo, ApplicationCoreInfo> {
+            val icon = getApplicationIcon(it.packageName, context)
+            ApplicationCoreInfo(
+                packageName = it.packageName,
+                appName = it.applicationInfo.name,
+                icon = icon
+            )
+        }
+        val appNameCache = HashMap<String, ApplicationCoreInfo>()
+        for (index in appCoreInfo.indices) {
+            val item = appCoreInfo[index]
+            val itemPackageName = item.packageName
+            appNameCache[itemPackageName] = item
+        }
+        return appNameCache
     }
 
 }
