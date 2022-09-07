@@ -43,7 +43,7 @@ object Util {
     @SuppressLint("ObsoleteSdkInt", "UseCompatLoadingForDrawables")
     fun getApplicationIcon(packageName: String, context: Context): Bitmap {
         val packageManager = context.packageManager
-        val otherContext =
+        var otherContext =
             context.createPackageContext(
                 packageName,
                 Context.CONTEXT_IGNORE_SECURITY
@@ -51,9 +51,11 @@ object Util {
         val applicationInfo =
             packageManager.getApplicationInfo(packageName, PackageManager.GET_META_DATA)
         val resources = packageManager.getResourcesForApplication(applicationInfo)
-        val id = applicationInfo.icon
+        var id = applicationInfo.icon
+        //如果获取到的icon资源值为0，就用本应用的默认图标代替
         if (id == 0) {
-            TODO("我不知道怎么写")
+            id = R.mipmap.ic_launcher
+            otherContext = context
         }
         val bitmap = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             val vectorDrawable: Drawable? =
@@ -67,7 +69,7 @@ object Util {
                     vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888
                 )
                 val canvas = Canvas(bitmap)
-                vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight())
+                vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
                 vectorDrawable.draw(canvas)
                 bitmap
             }
@@ -209,7 +211,7 @@ object Util {
             val icon = getApplicationIcon(it.packageName, context)
             ApplicationCoreInfo(
                 packageName = it.packageName,
-                appName = it.applicationInfo.name,
+                appName = context.packageManager.getApplicationLabel(it.applicationInfo).toString(),
                 icon = icon
             )
         }
