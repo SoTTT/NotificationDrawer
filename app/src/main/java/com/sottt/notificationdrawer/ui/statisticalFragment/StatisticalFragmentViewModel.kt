@@ -84,15 +84,15 @@ class StatisticalFragmentViewModel() : ViewModel() {
     fun createClassificationNotification(): HashMap<String, ArrayList<NotificationInfo>> {
         val future = Repository.getPackageNameAndCount()
         val packageNameAndCount = future.get()
-        val map = HashMap<String, ArrayList<NotificationInfo>>()
+        _classificationNotification.value = HashMap()
         for (item in packageNameAndCount) {
             val packageName = item.name
             if (packageName != null) {
                 val allNoFuture = Repository.getNotificationRecordWithPackageName(packageName)
                 val notifications = allNoFuture.get() as ArrayList
-                map[packageName] = notifications
+                classificationNotification.value?.set(packageName, notifications)
             }
         }
-        return map
+        return classificationNotification.value!!
     }
 }

@@ -3,7 +3,6 @@ package com.sottt.notificationdrawer
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.content.Context
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -24,7 +23,6 @@ import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.appl
 import com.sottt.notificationdrawer.data.defined.ApplicationCoreInfo
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import java.util.*
-import kotlin.collections.HashMap
 
 
 object Util {
@@ -73,7 +71,6 @@ object Util {
                 vectorDrawable.draw(canvas)
                 bitmap
             }
-
         } else {
             BitmapFactory.decodeResource(resources, id)
         }
@@ -95,7 +92,8 @@ object Util {
             this.id,
             this.packageName,
             this.key,
-            getApplicationIcon(this.packageName, applicationContext())
+            //getApplicationIcon(this.packageName, applicationContext())
+            NotificationDrawerApplication.getAppIcon(this.packageName)
         )
     }
 
@@ -202,26 +200,23 @@ object Util {
 
     }
 
-    fun packageNameToAppName(context: Context): HashMap<String, ApplicationCoreInfo> {
+    fun getAppCoreInfoFromPackName(context: Context, packageName: String): ApplicationCoreInfo {
         val packageInfoList = context.packageManager.getInstalledPackages(
             PackageManager.GET_ACTIVITIES or
                     PackageManager.GET_SERVICES
         )
-        val appCoreInfo = packageInfoList.map<PackageInfo, ApplicationCoreInfo> {
-            val icon = getApplicationIcon(it.packageName, context)
+        val appInfo = packageInfoList.find {
+            it.packageName == packageName
+        }
+        return if (appInfo == null) {
+            throw PackageManager.NameNotFoundException("$packageName is not found")
+        } else {
             ApplicationCoreInfo(
-                packageName = it.packageName,
-                appName = context.packageManager.getApplicationLabel(it.applicationInfo).toString(),
-                icon = icon
+                packageName,
+                context.packageManager.getApplicationLabel(appInfo.applicationInfo).toString(),
+                getApplicationIcon(appInfo.packageName, context)
             )
         }
-        val appNameCache = HashMap<String, ApplicationCoreInfo>()
-        for (index in appCoreInfo.indices) {
-            val item = appCoreInfo[index]
-            val itemPackageName = item.packageName
-            appNameCache[itemPackageName] = item
-        }
-        return appNameCache
     }
 
 }

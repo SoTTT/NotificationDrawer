@@ -60,7 +60,7 @@ class StatisticalFragment : Fragment() {
         val appNames = packageNames.map {
             NotificationDrawerApplication.getAppName(it)
         }
-        val viewPagerAdapter = ViewPagerAdapter(fragment, map)
+        val viewPagerAdapter = ViewPagerAdapter(fragment, map, viewModel)
         val viewPager = viewBinding.pager
         viewPager.adapter = viewPagerAdapter
         TabLayoutMediator(viewBinding.tabLayout, viewPager) { tab, position ->
