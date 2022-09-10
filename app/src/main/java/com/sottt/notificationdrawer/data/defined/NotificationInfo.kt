@@ -16,7 +16,7 @@ data class NotificationInfo(
     var packageName: String,
     var key: String,
     @Ignore
-    val smallIcon: Bitmap = Bitmap.createBitmap(40, 40, Bitmap.Config.RGBA_F16)
+    var smallIcon: Bitmap = Bitmap.createBitmap(40, 40, Bitmap.Config.RGBA_F16)
 ):Serializable {
 
     @PrimaryKey(autoGenerate = true)

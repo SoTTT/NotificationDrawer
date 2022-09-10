@@ -2,12 +2,15 @@ package com.sottt.notificationdrawer.ui.statisticalFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.listener.ChartTouchListener
+import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.databinding.FragmentStatisticalBinding
@@ -39,6 +42,8 @@ class StatisticalFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         iniCharts()
         viewModel.loadPieChartsData()
+        setChartsStyle()
+        iniChartsCallback()
         iniViewPager(this)
     }
 
@@ -51,6 +56,62 @@ class StatisticalFragment : Fragment() {
             }
             pieChart.animateXY(1000, 1000)
             pieChart.invalidate()
+        }
+    }
+
+    private fun setChartsStyle() {
+        val pieChart = viewBinding.charts
+        pieChart.centerText = "Notification"
+        pieChart.setDrawEntryLabels(false)
+        val legend = pieChart.legend
+        legend.isEnabled = false
+    }
+
+    private fun iniChartsCallback() {
+        val pie = viewBinding.charts
+        pie.onChartGestureListener = object : OnChartGestureListener {
+            override fun onChartGestureStart(
+                me: MotionEvent?,
+                lastPerformedGesture: ChartTouchListener.ChartGesture?
+            ) {
+            }
+
+            override fun onChartGestureEnd(
+                me: MotionEvent?,
+                lastPerformedGesture: ChartTouchListener.ChartGesture?
+            ) {
+
+            }
+
+            override fun onChartLongPressed(me: MotionEvent?) {
+
+            }
+
+            override fun onChartDoubleTapped(me: MotionEvent?) {
+
+            }
+
+            override fun onChartSingleTapped(me: MotionEvent?) {
+
+            }
+
+            override fun onChartFling(
+                me1: MotionEvent?,
+                me2: MotionEvent?,
+                velocityX: Float,
+                velocityY: Float
+            ) {
+
+            }
+
+            override fun onChartScale(me: MotionEvent?, scaleX: Float, scaleY: Float) {
+
+            }
+
+            override fun onChartTranslate(me: MotionEvent?, dX: Float, dY: Float) {
+
+            }
+
         }
     }
 
@@ -68,10 +129,5 @@ class StatisticalFragment : Fragment() {
         }.attach()
     }
 
-    private fun iniCardList() {
-        viewModel.classificationNotification.observe(this) {
-
-        }
-    }
 
 }

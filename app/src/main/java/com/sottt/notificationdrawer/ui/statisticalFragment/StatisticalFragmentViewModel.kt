@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.Util
 import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.data.defined.NotificationInfo

@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.applicationContext
 import com.sottt.notificationdrawer.Util
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
@@ -133,7 +134,11 @@ object Repository {
     fun getNotificationRecordWithPackageName(packageName: String): FutureTask<List<NotificationInfo>> {
         val callable = Callable {
             synchronized(this) {
-                dao.selectWithPackageName(packageName)
+                val list = dao.selectWithPackageName(packageName)
+                for (item in list) {
+                    item.smallIcon = NotificationDrawerApplication.getAppIcon(item.packageName)
+                }
+                list
             }
         }
         val task = FutureTask(callable)

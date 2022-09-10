@@ -39,7 +39,16 @@ class NotificationDrawerApplication : Application() {
         private val appNameCache: HashMap<String, ApplicationCoreInfo> = HashMap()
 
         fun getAppName(packageName: String): String {
-            return appNameCache[packageName]?.appName ?: "NULL"
+            synchronized(lockForAppNameCache) {
+                val appCoreInfo = appNameCache[packageName]
+                return if (appCoreInfo == null) {
+                    val appInfo = Util.getAppCoreInfoFromPackName(applicationContext(), packageName)
+                    appNameCache[packageName] = appInfo
+                    appInfo.appName
+                } else {
+                    appCoreInfo.appName
+                }
+            }
         }
 
         private val lockForAppNameCache = Mutex()
