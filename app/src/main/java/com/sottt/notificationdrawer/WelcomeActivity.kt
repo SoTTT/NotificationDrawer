@@ -3,8 +3,6 @@ package com.sottt.notificationdrawer
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import androidx.fragment.app.Fragment
 import com.sottt.notificationdrawer.ui.welcomeFragment.WelcomeFragment
 
 class WelcomeActivity : AppCompatActivity() {
@@ -12,7 +10,7 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
-        if (Util.checkNecessaryPermission()) {
+        if (Util.checkNecessaryPermission(NotificationDrawerApplication.applicationContext())) {
             val intent = Intent(this, MainActivity::class.java)
             intent.extras
             startActivity(intent)

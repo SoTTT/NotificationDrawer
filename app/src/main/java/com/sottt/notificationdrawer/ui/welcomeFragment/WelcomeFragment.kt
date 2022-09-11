@@ -91,6 +91,7 @@ class WelcomeFragment : Fragment() {
                 } catch (exception: Exception) {
                     exception.printStackTrace()
                     Util.showToast("跳转失败", Toast.LENGTH_LONG)
+                    viewModel.flushAccessNotificationPermission()
                 }
             }
         }

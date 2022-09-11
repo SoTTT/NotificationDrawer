@@ -97,6 +97,12 @@ object Util {
         )
     }
 
+    fun formatTime(time: Long): String {
+        val timeFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val date = Date(time)
+        return timeFormatter.format(date)
+    }
+
     /**
      * Show a Toast use application context
      *
@@ -117,11 +123,11 @@ object Util {
      * true :have access notification permission
      * false :have not access notification permission
      */
-    fun notificationAccessEnable(): Boolean {
-        val packageName: String = applicationContext().packageName
+    fun notificationAccessEnable(context: Context): Boolean {
+        val packageName: String = context.packageName
         val flat: String =
             Settings.Secure.getString(
-                applicationContext().contentResolver,
+                context.contentResolver,
                 "enabled_notification_listeners"
             )
         return flat.contains(packageName)
@@ -133,20 +139,25 @@ object Util {
      * @return boolean
      */
 
-    fun notificationEnable(): Boolean {
-        return NotificationManagerCompat.from(applicationContext()).areNotificationsEnabled()
+    fun notificationEnable(context: Context): Boolean {
+        return NotificationManagerCompat.from(context).areNotificationsEnabled()
     }
 
-    fun ignoreBatteryOptimizations(): Boolean {
+    fun ignoreBatteryOptimizations(context: Context): Boolean {
         val powerManager =
-            applicationContext().getSystemService(Context.POWER_SERVICE) as PowerManager
-        return powerManager.isIgnoringBatteryOptimizations(applicationContext().packageName)
+            context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        return powerManager.isIgnoringBatteryOptimizations(context.packageName)
     }
 
-    fun checkAllPermission(): Boolean =
-        ignoreBatteryOptimizations() && notificationEnable() && notificationAccessEnable()
+    fun checkAllPermission(context: Context): Boolean {
+        return ignoreBatteryOptimizations(context) && notificationEnable(context) && notificationAccessEnable(
+            context
+        )
+    }
 
-    fun checkNecessaryPermission(): Boolean = notificationAccessEnable() && notificationEnable()
+    fun checkNecessaryPermission(context: Context): Boolean {
+        return notificationAccessEnable(context) && notificationEnable(context)
+    }
 
     object LogUtil {
 

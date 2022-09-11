@@ -4,11 +4,13 @@
 
     <item
         android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_notifications_24"
         android:title="通知"
         tools:ignore="HardcodedText" />
 
     <item
         android:id="@+id/statisticalFragment"
+        android:icon="@drawable/ic_pie_chart_24"
         android:title="统计"
         tools:ignore="HardcodedText" />
 </menu>

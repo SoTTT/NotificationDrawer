@@ -48,4 +48,23 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Permission">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="permission_access_notification"
+            android:title="Access Notification" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="permission_push_notification"
+            android:title="Push Notification" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="permission_ignore_battery_optimizations"
+            android:title="Ignore Battery Optimizations" />
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

@@ -8,8 +8,11 @@ import com.google.gson.Gson
 import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.applicationContext
 import com.sottt.notificationdrawer.Util
+import com.sottt.notificationdrawer.data.defined.ApplicationPermissionStatus
+import com.sottt.notificationdrawer.data.defined.ApplicationSettings
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import com.sottt.notificationdrawer.filter.AbstractFilter
+import com.sottt.notificationdrawer.setting.ui.AppSettingsFragment
 import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.Callable
@@ -22,6 +25,10 @@ object Repository {
     data class PackageNameAndCount(val name: String?, val count: Int?)
 
     private const val TAG = "Repository"
+
+    private val settingsPreference by lazy {
+        AppSettingsFragment.getPreference(applicationContext())
+    }
 
     //_activeNotification应当在自己发生变化时将变化同步给HoneFragmentViewModel的LiveData
     private var _activeNotification = MutableLiveData<List<NotificationInfo>>()
@@ -61,16 +68,35 @@ object Repository {
         NotificationDatabase.getDatabase(applicationContext()).NotificationDao()
     }
 
-    fun readSettings() {
+    fun readSettings(): ApplicationSettings {
+        val applicationPermissionStatus =
+            ApplicationPermissionStatus(
+                settingsPreference.getBoolean("permission_push_notification", false),
+                settingsPreference.getBoolean("permission_access_notification", false),
+                settingsPreference.getBoolean("permission_ignore_battery_optimizations", false)
+            )
+        return ApplicationSettings(applicationPermissionStatus)
 
     }
 
     fun create() {}
 
-    @SuppressLint("CommitPrefEdits")
-    fun writeSettings() {
-        val settingsEditor =
-            applicationContext().getSharedPreferences("settings", Context.MODE_PRIVATE).edit()
+
+    fun writeSettings(settings: ApplicationSettings) {
+        settingsPreference.edit().apply {
+            putBoolean(
+                "permission_access_notification",
+                settings.permissionStatus.notificationAccessPermission
+            )
+            putBoolean(
+                "permission_push_notification",
+                settings.permissionStatus.notificationPushPermission
+            )
+            putBoolean(
+                "permission_ignore_battery_optimizations",
+                settings.permissionStatus.ignorePowerOptimization
+            )
+        }.apply()
     }
 
     fun storeAllNotification(notification: List<NotificationInfo>) {

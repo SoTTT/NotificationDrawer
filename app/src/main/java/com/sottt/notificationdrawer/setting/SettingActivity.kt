@@ -15,7 +15,7 @@ class SettingActivity : AppCompatActivity() {
         Navigation.findNavController(this, R.id.center)
     }
 
-    companion object {
+     companion object {
         const val SETTINGS_PAGE = 0
         const val FILTER_PAGE = 1
         const val HISTORY_PAGE = 2
@@ -24,19 +24,20 @@ class SettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_setting)
-
         setSupportActionBar(findViewById(R.id.toolbar))
-        val page = savedInstanceState?.getInt("PAGE")
-        if (page != null) {
-            loadPage(page)
-        }
     }
 
     override fun onStart() {
         super.onStart()
         val navInflater = navController.navInflater
         val navGraph = navInflater.inflate(R.navigation.settings_page_nav_host)
-        navGraph.startDestination = R.id.appSettingsFragment
+        val startDestination = when (this.intent.extras?.getInt("PAGE")) {
+            SETTINGS_PAGE -> R.id.appSettingsFragment
+            FILTER_PAGE -> 1
+            HISTORY_PAGE -> 2
+            else -> R.id.appSettingsFragment
+        }
+        navGraph.startDestination = startDestination
         navController.graph = navGraph
     }
 
@@ -45,15 +46,4 @@ class SettingActivity : AppCompatActivity() {
         return true
     }
 
-    private fun loadPage(page: Int) {
-        when (page) {
-            SETTINGS_PAGE -> {}
-            FILTER_PAGE -> {
-
-            }
-            HISTORY_PAGE -> {
-
-            }
-        }
-    }
 }

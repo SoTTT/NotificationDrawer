@@ -3,21 +3,19 @@ package com.sottt.notificationdrawer
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
-import android.os.Build
 import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.data.defined.ApplicationCoreInfo
 import com.sottt.notificationdrawer.data.defined.ApplicationPermissionStatus
 import com.sottt.notificationdrawer.data.defined.ApplicationSettings
 import kotlinx.coroutines.sync.Mutex
-import kotlin.concurrent.thread
+import java.util.*
+import kotlin.collections.HashMap
 
 class NotificationDrawerApplication : Application() {
+
+    private val _launchTime = Date().time
+    val launchTime get() = Util.formatTime(_launchTime)
 
     companion object {
         @SuppressLint("StaticFieldLeak")
@@ -86,11 +84,13 @@ class NotificationDrawerApplication : Application() {
         //iniAppNameCache()
         mContext = applicationContext
         applicationSettings.permissionStatus.apply {
-            notificationAccessPermission = Util.notificationAccessEnable()
-            notificationPushPermission = Util.notificationEnable()
-            ignorePowerOptimization = Util.ignoreBatteryOptimizations()
+            notificationAccessPermission = Util.notificationAccessEnable(applicationContext())
+            notificationPushPermission = Util.notificationEnable(applicationContext())
+            ignorePowerOptimization = Util.ignoreBatteryOptimizations(applicationContext())
         }
-        Repository.create()
+        if (applicationSettings != Repository.readSettings()){
+            Repository.writeSettings(applicationSettings)
+        }
     }
 
 }

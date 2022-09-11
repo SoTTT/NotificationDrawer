@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRestart() {
         super.onRestart()
-        if (!Util.checkNecessaryPermission()) {
+        if (!Util.checkNecessaryPermission(NotificationDrawerApplication.applicationContext())) {
             unbindListenerService()
             stopListenerService()
             val intent = Intent(this, WelcomeActivity::class.java)
