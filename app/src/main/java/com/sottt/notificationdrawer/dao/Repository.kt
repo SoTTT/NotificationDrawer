@@ -1,10 +1,7 @@
 package com.sottt.notificationdrawer.dao
 
-import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
 import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.applicationContext
 import com.sottt.notificationdrawer.Util
@@ -13,10 +10,7 @@ import com.sottt.notificationdrawer.data.defined.ApplicationSettings
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import com.sottt.notificationdrawer.filter.AbstractFilter
 import com.sottt.notificationdrawer.setting.ui.AppSettingsFragment
-import kotlinx.coroutines.*
-import java.util.*
 import java.util.concurrent.Callable
-import java.util.concurrent.Future
 import java.util.concurrent.FutureTask
 import kotlin.concurrent.thread
 
@@ -33,11 +27,11 @@ object Repository {
     //_activeNotification应当在自己发生变化时将变化同步给HoneFragmentViewModel的LiveData
     private var _activeNotification = MutableLiveData<List<NotificationInfo>>()
 
-    private val filterStore by lazy {
-        applicationContext().getSharedPreferences("filter", Context.MODE_PRIVATE).edit()
-    }
-
     val activeNotification: LiveData<List<NotificationInfo>> = _activeNotification
+
+    private val filterLoader by lazy {
+        FilterLoader()
+    }
 
     fun loadActiveNotification(list: List<NotificationInfo>) {
         _activeNotification.postValue(list)
@@ -132,18 +126,11 @@ object Repository {
 
 
     fun storeFilter(filters: List<AbstractFilter>) {
-        thread {
-            for (item in filters) {
-                storeFilter(item, item.javaClass)
-            }
-        }
+        filterLoader.storeFilters(filters)
     }
 
     private fun <T> storeFilter(filter: AbstractFilter, javaClass: Class<T>) {
-        filterStore.apply {
-            val json = Gson().toJson(filter, javaClass)
-            putString(UUID.randomUUID().toString(), json)
-        }.apply()
+        filterLoader.storeFilter(filter)
     }
 
     fun getNotificationCount(): FutureTask<Int> {
@@ -181,6 +168,10 @@ object Repository {
         val task = FutureTask(callable)
         Thread(task).start()
         return task
+    }
+
+    fun getFilters(): List<AbstractFilter> {
+        return filterLoader.loadFilters()
     }
 
 }

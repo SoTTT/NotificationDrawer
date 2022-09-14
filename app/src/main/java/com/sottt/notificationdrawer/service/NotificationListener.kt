@@ -15,9 +15,11 @@ import androidx.core.app.NotificationCompat
 import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.MainActivity
 import com.sottt.notificationdrawer.R
+import com.sottt.notificationdrawer.Util
 import com.sottt.notificationdrawer.Util.LogUtil
 import com.sottt.notificationdrawer.Util.createNullNotification
 import com.sottt.notificationdrawer.Util.toNotificationInfo
+import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import com.sottt.notificationdrawer.filter.FilterCollection
 import com.sottt.notificationdrawer.filter.NotificationFilterHandler
 
@@ -38,6 +40,11 @@ class NotificationListener : NotificationListenerService() {
 
         fun cancelNotification(key: String) {
             cancelOneNotification(key)
+        }
+
+        fun setFilterValid(valid: Boolean) {
+            if (valid != isFilterValid)
+                (filterHandler as NotificationFilterHandler).setValid(valid)
         }
 
     }
@@ -169,7 +176,8 @@ class NotificationListener : NotificationListenerService() {
     }
 
     private fun iniNotificationFilterHandler() {
-
+        val allFilter = Repository.getFilters()
+        filterHandler.addAllFilter(allFilter)
     }
 
 }

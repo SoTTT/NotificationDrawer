@@ -3,13 +3,17 @@ package com.sottt.notificationdrawer.filter
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import java.util.*
 
-class NotificationFilterHandler : FilterCollection {
+class NotificationFilterHandler : FilterCollection, Checkable {
 
     private val mFilterCollection = mutableListOf<AbstractFilter>()
 
     private var _isValid: Boolean = true
 
     val isValid: Boolean get() = _isValid
+
+    fun setValid(valid: Boolean) {
+        _isValid = valid
+    }
 
     override fun check(notification: NotificationInfo): Boolean {
         var flag = true
@@ -26,6 +30,12 @@ class NotificationFilterHandler : FilterCollection {
     override fun removeFilter(tag: String): Boolean {
         return mFilterCollection.removeIf {
             it.tag == tag
+        }
+    }
+
+    override fun addAllFilter(list: List<AbstractFilter>) {
+        for (item in list) {
+            addFilter(item)
         }
     }
 
