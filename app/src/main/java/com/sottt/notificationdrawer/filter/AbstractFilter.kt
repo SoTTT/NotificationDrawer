@@ -6,4 +6,6 @@ abstract class AbstractFilter : Checkable, Serializable, Cloneable {
 
     var tag: String = ""
     var valid: Boolean = true
+
+    var name: String? = null
 }

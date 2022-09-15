@@ -20,6 +20,7 @@ import com.sottt.notificationdrawer.Util.LogUtil
 import com.sottt.notificationdrawer.Util.createNullNotification
 import com.sottt.notificationdrawer.Util.toNotificationInfo
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
+import com.sottt.notificationdrawer.filter.AbstractFilter
 import com.sottt.notificationdrawer.filter.FilterCollection
 import com.sottt.notificationdrawer.filter.NotificationFilterHandler
 
@@ -46,6 +47,8 @@ class NotificationListener : NotificationListenerService() {
             if (valid != isFilterValid)
                 (filterHandler as NotificationFilterHandler).setValid(valid)
         }
+
+        fun getAllFilter(): List<AbstractFilter> = getAllFilters()
 
     }
 
@@ -178,6 +181,10 @@ class NotificationListener : NotificationListenerService() {
     private fun iniNotificationFilterHandler() {
         val allFilter = Repository.getFilters()
         filterHandler.addAllFilter(allFilter)
+    }
+
+    fun getAllFilters(): List<AbstractFilter> {
+        return (filterHandler as NotificationFilterHandler).getAllFilters()
     }
 
 }

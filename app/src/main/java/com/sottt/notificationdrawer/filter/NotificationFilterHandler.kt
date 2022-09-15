@@ -44,4 +44,10 @@ class NotificationFilterHandler : FilterCollection, Checkable {
             check(it)
         }
     }
+
+    fun getAllFilters(): List<AbstractFilter> {
+        return mutableListOf<AbstractFilter>().apply {
+            addAll(mFilterCollection)
+        }.toList()
+    }
 }

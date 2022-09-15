@@ -22,6 +22,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.sottt.notificationdrawer.databinding.ActivityMainBinding
+import com.sottt.notificationdrawer.service.ListenerController
 import com.sottt.notificationdrawer.service.NotificationListener
 import com.sottt.notificationdrawer.setting.SettingActivity
 import com.sottt.notificationdrawer.ui.homeFragment.HomeFragmentViewModel
@@ -43,12 +44,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var behavior: BottomSheetBehavior<View>
     private lateinit var dialog: BottomSheetDialog
 
-    lateinit var notificationListenerBinder: NotificationListener.NotificationListenBinder
+    lateinit var listenerController: ListenerController
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             Util.LogUtil.d(TAG, "MainActivity: service bind")
-            notificationListenerBinder = service as NotificationListener.NotificationListenBinder
+            listenerController = ListenerController.create()
+            listenerController.setBinder(service as NotificationListener.NotificationListenBinder)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -59,6 +61,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unbindListenerService()
+        listenerController.activityDestroy()
     }
 
 

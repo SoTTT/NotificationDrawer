@@ -93,4 +93,9 @@ class NotificationDrawerApplication : Application() {
         }
     }
 
+    override fun onTerminate() {
+        super.onTerminate()
+        Repository.storeAllFilter()
+    }
+
 }

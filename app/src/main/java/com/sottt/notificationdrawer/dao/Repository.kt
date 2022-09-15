@@ -9,6 +9,7 @@ import com.sottt.notificationdrawer.data.defined.ApplicationPermissionStatus
 import com.sottt.notificationdrawer.data.defined.ApplicationSettings
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import com.sottt.notificationdrawer.filter.AbstractFilter
+import com.sottt.notificationdrawer.service.ListenerController
 import com.sottt.notificationdrawer.setting.ui.AppSettingsFragment
 import java.util.concurrent.Callable
 import java.util.concurrent.FutureTask
@@ -174,4 +175,8 @@ object Repository {
         return filterLoader.loadFilters()
     }
 
+    fun storeAllFilter() {
+        val filters = ListenerController.getAllFilter()
+        storeFilter(filters)
+    }
 }
