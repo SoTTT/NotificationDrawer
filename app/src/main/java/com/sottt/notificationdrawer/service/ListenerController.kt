@@ -1,8 +1,13 @@
 package com.sottt.notificationdrawer.service
 
+import com.sottt.notificationdrawer.data.defined.FilterInfo
 import com.sottt.notificationdrawer.filter.AbstractFilter
 
 object ListenerController {
+
+    fun AbstractFilter.toFilterInfo(): FilterInfo {
+        return FilterInfo(this.name ?: "", this.tag)
+    }
 
     interface ControllerInitStatusChanged {
         fun changed(new: Boolean)
@@ -38,5 +43,11 @@ object ListenerController {
     }
 
     fun create(): ListenerController = this
+
+    fun getAllFilterInfo(): List<FilterInfo> {
+        return getAllFilter().map {
+            it.toFilterInfo()
+        }
+    }
 
 }

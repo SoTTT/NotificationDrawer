@@ -11,4 +11,10 @@ interface FilterCollection {
     fun removeFilter(tag: String): Boolean
 
     fun addAllFilter(list: List<AbstractFilter>)
+
+    fun isEmpty(): Boolean
+
+    fun clear()
+
+    fun size(): Int
 }

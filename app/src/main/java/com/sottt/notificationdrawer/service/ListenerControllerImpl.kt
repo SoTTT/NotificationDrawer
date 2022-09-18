@@ -10,6 +10,6 @@ class ListenerControllerImpl {
         notificationListenerBinder = binder
     }
 
-    fun getAllFilters(): List<AbstractFilter> = notificationListenerBinder.getAllFilter()
+    fun getAllFilters(): List<AbstractFilter> = notificationListenerBinder.getAllFilters()
 
 }

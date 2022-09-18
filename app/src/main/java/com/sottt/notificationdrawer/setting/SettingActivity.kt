@@ -3,10 +3,8 @@ package com.sottt.notificationdrawer.setting
 import android.os.Bundle
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import com.sottt.notificationdrawer.R
 
 class SettingActivity : AppCompatActivity() {
@@ -15,7 +13,11 @@ class SettingActivity : AppCompatActivity() {
         Navigation.findNavController(this, R.id.center)
     }
 
-     companion object {
+    private val viewModel by lazy {
+        ViewModelProvider(this).get(SettingViewModel::class.java)
+    }
+
+    companion object {
         const val SETTINGS_PAGE = 0
         const val FILTER_PAGE = 1
         const val HISTORY_PAGE = 2
@@ -33,7 +35,7 @@ class SettingActivity : AppCompatActivity() {
         val navGraph = navInflater.inflate(R.navigation.settings_page_nav_host)
         val startDestination = when (this.intent.extras?.getInt("PAGE")) {
             SETTINGS_PAGE -> R.id.appSettingsFragment
-            FILTER_PAGE -> 1
+            FILTER_PAGE -> R.id.filterFragment
             HISTORY_PAGE -> 2
             else -> R.id.appSettingsFragment
         }
@@ -44,6 +46,18 @@ class SettingActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.settings_activity_tool_bar_actions, menu)
         return true
+    }
+
+    private fun initViewModel() {
+        viewModel
+    }
+
+    fun getActivityViewModel(): SettingViewModel {
+        return viewModel
+    }
+
+    private fun loadFilter() {
+
     }
 
 }

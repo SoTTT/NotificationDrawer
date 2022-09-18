@@ -39,6 +39,16 @@ class NotificationFilterHandler : FilterCollection, Checkable {
         }
     }
 
+    override fun size(): Int = mFilterCollection.size
+
+    override fun isEmpty(): Boolean {
+        return mFilterCollection.isEmpty()
+    }
+
+    override fun clear() {
+        mFilterCollection.clear()
+    }
+
     override fun filter(notifications: Collection<NotificationInfo>): Collection<NotificationInfo> {
         return notifications.filter {
             check(it)
@@ -46,8 +56,6 @@ class NotificationFilterHandler : FilterCollection, Checkable {
     }
 
     fun getAllFilters(): List<AbstractFilter> {
-        return mutableListOf<AbstractFilter>().apply {
-            addAll(mFilterCollection)
-        }.toList()
+        return mFilterCollection
     }
 }

@@ -7,4 +7,10 @@
         android:id="@+id/appSettingsFragment"
         android:name="com.sottt.notificationdrawer.setting.ui.AppSettingsFragment"
         android:label="AppSettingsFragment" />
+
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.sottt.notificationdrawer.setting.ui.filterFragment.FilterFragment"
+        android:label="FilterFragment" />
+
 </navigation>

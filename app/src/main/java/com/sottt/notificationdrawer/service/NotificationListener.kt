@@ -15,11 +15,10 @@ import androidx.core.app.NotificationCompat
 import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.MainActivity
 import com.sottt.notificationdrawer.R
-import com.sottt.notificationdrawer.Util
 import com.sottt.notificationdrawer.Util.LogUtil
 import com.sottt.notificationdrawer.Util.createNullNotification
 import com.sottt.notificationdrawer.Util.toNotificationInfo
-import com.sottt.notificationdrawer.data.defined.NotificationInfo
+import com.sottt.notificationdrawer.data.defined.FilterInfo
 import com.sottt.notificationdrawer.filter.AbstractFilter
 import com.sottt.notificationdrawer.filter.FilterCollection
 import com.sottt.notificationdrawer.filter.NotificationFilterHandler
@@ -37,6 +36,7 @@ class NotificationListener : NotificationListenerService() {
 
     inner class NotificationListenBinder : Binder() {
 
+
         fun getNotification() = activeNotifications.toList()
 
         fun cancelNotification(key: String) {
@@ -48,7 +48,7 @@ class NotificationListener : NotificationListenerService() {
                 (filterHandler as NotificationFilterHandler).setValid(valid)
         }
 
-        fun getAllFilter(): List<AbstractFilter> = getAllFilters()
+        fun getAllFilters(): List<AbstractFilter> = this@NotificationListener.getAllFilters()
 
     }
 
@@ -186,5 +186,15 @@ class NotificationListener : NotificationListenerService() {
     fun getAllFilters(): List<AbstractFilter> {
         return (filterHandler as NotificationFilterHandler).getAllFilters()
     }
+
+//    fun flushFilter() {
+//
+//    }
+//
+//    fun flushFiler(filters: List<AbstractFilter>) {
+//        filterHandler.clear()
+//        filterHandler.addAllFilter(filters)
+//    }
+
 
 }
