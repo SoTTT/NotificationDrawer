@@ -8,6 +8,18 @@ class FilterGroup() : FilterCollection, AbstractFilter() {
         TODO("Not yet implemented")
     }
 
+    override fun isEmpty(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun clear() {
+        TODO("Not yet implemented")
+    }
+
+    override fun size(): Int {
+        TODO("Not yet implemented")
+    }
+
     override fun addFilter(filter: AbstractFilter): Boolean {
         TODO("Not yet implemented")
     }

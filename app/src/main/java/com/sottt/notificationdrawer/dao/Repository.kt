@@ -20,19 +20,17 @@ object Repository {
     data class PackageNameAndCount(val name: String?, val count: Int?)
 
     private const val TAG = "Repository"
-
     private val settingsPreference by lazy {
         AppSettingsFragment.getPreference(applicationContext())
     }
 
     //_activeNotification应当在自己发生变化时将变化同步给HoneFragmentViewModel的LiveData
     private var _activeNotification = MutableLiveData<List<NotificationInfo>>()
-
     val activeNotification: LiveData<List<NotificationInfo>> = _activeNotification
-
     private val filterLoader by lazy {
         FilterLoader()
     }
+    private val filterList = filterLoader.loadFilters()
 
     fun loadActiveNotification(list: List<NotificationInfo>) {
         _activeNotification.postValue(list)
@@ -172,7 +170,7 @@ object Repository {
     }
 
     fun getFilters(): List<AbstractFilter> {
-        return filterLoader.loadFilters()
+        return filterList.toList()
     }
 
     fun storeAllFilter() {

@@ -13,6 +13,10 @@ object ListenerController {
         fun changed(new: Boolean)
     }
 
+    interface OnFilterMergeListener {
+        fun onMerge()
+    }
+
     class BinderNotConnectedException() : Exception() {
         override val message: String
             get() = "service not connect"

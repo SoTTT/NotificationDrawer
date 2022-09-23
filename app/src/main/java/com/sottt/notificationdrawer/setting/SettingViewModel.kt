@@ -7,12 +7,17 @@ import com.sottt.notificationdrawer.data.defined.FilterInfo
 import com.sottt.notificationdrawer.service.ListenerController
 
 class SettingViewModel() : ViewModel() {
+
+    init {
+        loadFilters()
+    }
+
     private val _filterInfo = MutableLiveData<List<FilterInfo>>()
 //    private val _filters = MutableLiveData<MutableList<AbstractFilter>>()
 
     val filterInfo: LiveData<List<FilterInfo>> = _filterInfo
 
-    fun loadFilters() {
+    private fun loadFilters() {
         _filterInfo.postValue(ListenerController.getAllFilterInfo())
     }
 
