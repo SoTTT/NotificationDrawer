@@ -3,6 +3,7 @@ package com.sottt.notificationdrawer
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -228,6 +229,24 @@ object Util {
                 getApplicationIcon(appInfo.packageName, context)
             )
         }
+    }
+
+
+    fun getInstalledApp(context: Context): List<String> {
+        val packages: MutableList<String> = ArrayList()
+        try {
+            val packageInfo: List<PackageInfo> = context.packageManager.getInstalledPackages(
+                PackageManager.GET_ACTIVITIES or
+                        PackageManager.GET_SERVICES
+            )
+            for (info in packageInfo) {
+                val pkg = info.packageName
+                packages.add(pkg)
+            }
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
+        return packages
     }
 
 }

@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settings_page_nav_host">
 
     <fragment
         android:id="@+id/appSettingsFragment"
         android:name="com.sottt.notificationdrawer.setting.ui.AppSettingsFragment"
-        android:label="AppSettingsFragment" />
+        android:label="AppSettingsFragment" >
+        <action
+            android:id="@+id/action_appSettingsFragment_to_filterFragment"
+            app:destination="@id/filterFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/filterFragment"
         android:name="com.sottt.notificationdrawer.setting.ui.filterFragment.FilterFragment"
-        android:label="FilterFragment" />
+        android:label="FilterFragment" >
+        <action
+            android:id="@+id/action_filterFragment_to_appSettingsFragment"
+            app:destination="@id/appSettingsFragment" />
+        <action
+            android:id="@+id/action_filterFragment_to_createFilterFragment"
+            app:destination="@id/createFilterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createFilterFragment"
+        android:name="com.sottt.notificationdrawer.setting.ui.createFilterFragment.CreateFilterFragment"
+        android:label="fragment_create_filter"
+        tools:layout="@layout/fragment_create_filter" />
 
 </navigation>

@@ -9,7 +9,7 @@ import com.sottt.notificationdrawer.R
 
 class SettingActivity : AppCompatActivity() {
 
-    private val navController by lazy {
+    val navController by lazy {
         Navigation.findNavController(this, R.id.center)
     }
 

@@ -68,6 +68,10 @@ class NotificationDrawerApplication : Application() {
                 }
             }
         }
+
+        fun getInstalledAppList(): List<String> =
+            Util.getInstalledApp(applicationContext())
+
     }
 
 
@@ -88,7 +92,7 @@ class NotificationDrawerApplication : Application() {
             notificationPushPermission = Util.notificationEnable(applicationContext())
             ignorePowerOptimization = Util.ignoreBatteryOptimizations(applicationContext())
         }
-        if (applicationSettings != Repository.readSettings()){
+        if (applicationSettings != Repository.readSettings()) {
             Repository.writeSettings(applicationSettings)
         }
     }
