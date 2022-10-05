@@ -104,7 +104,6 @@ class FilterLoader {
                 val index = uuidArray.indexOf(it)
                 val json = filterStore.getString(it, "")
                 val className = classList.elementAt(index)
-//                val gson=GsonBuilder().registerTypeAdapter()
                 Gson().fromJson(json, Class.forName(className)) as AbstractFilter
             }
         }
