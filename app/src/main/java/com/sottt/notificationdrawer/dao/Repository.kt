@@ -30,7 +30,7 @@ object Repository {
     private val filterLoader by lazy {
         FilterLoader()
     }
-    private val filterList = filterLoader.loadFilters()
+    private val filterList = filterLoader.loadFilters().toMutableList()
 
     fun loadActiveNotification(list: List<NotificationInfo>) {
         _activeNotification.postValue(list)
@@ -174,7 +174,14 @@ object Repository {
     }
 
     fun storeAllFilter() {
-        val filters = ListenerController.getAllFilter()
-        storeFilter(filters)
+        storeFilter(filterList)
+    }
+
+    fun addFilter(filter: AbstractFilter): Boolean {
+        return filterList.add(filter)
+    }
+
+    fun addFilter(filter: List<AbstractFilter>): Boolean {
+        return filterList.addAll(filter)
     }
 }

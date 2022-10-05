@@ -17,6 +17,8 @@ import androidx.core.widget.addTextChangedListener
 import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.R
 import com.sottt.notificationdrawer.Util
+import com.sottt.notificationdrawer.dao.Repository
+import com.sottt.notificationdrawer.filter.PackageFilter
 import com.sottt.notificationdrawer.setting.SettingActivity
 
 
@@ -86,7 +88,10 @@ class CreateFilterFragment : Fragment() {
                 }
                 view.findViewById<Button>(R.id.enter_button).setOnClickListener {
                     val activity = activity as SettingActivity
-                    TODO("create filter")
+                    Repository.addFilter(PackageFilter().apply {
+                        name = filterName
+                        addPackageName(packageNameSet)
+                    })
                     activity.navController.popBackStack()
                 }
             }

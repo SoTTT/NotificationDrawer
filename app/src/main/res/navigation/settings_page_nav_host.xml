@@ -28,6 +28,10 @@
         android:id="@+id/createFilterFragment"
         android:name="com.sottt.notificationdrawer.setting.ui.createFilterFragment.CreateFilterFragment"
         android:label="fragment_create_filter"
-        tools:layout="@layout/fragment_create_filter" />
+        tools:layout="@layout/fragment_create_filter" >
+        <action
+            android:id="@+id/action_createFilterFragment_to_filterFragment"
+            app:destination="@id/filterFragment" />
+    </fragment>
 
 </navigation>

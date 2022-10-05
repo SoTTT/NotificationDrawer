@@ -2,6 +2,7 @@ package com.sottt.notificationdrawer.dao
 
 import android.content.Context
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.filter.AbstractFilter
 import kotlinx.coroutines.sync.Mutex
@@ -16,7 +17,7 @@ class FilterLoader {
             get() = "the length of a array or list not be negative"
     }
 
-    class KeyNotFoundException(val index: Int) : Exception() {
+    class KeyNotFoundException(private val index: Int) : Exception() {
         override val message: String
             get() = "the $index key si not found"
     }
@@ -103,6 +104,7 @@ class FilterLoader {
                 val index = uuidArray.indexOf(it)
                 val json = filterStore.getString(it, "")
                 val className = classList.elementAt(index)
+//                val gson=GsonBuilder().registerTypeAdapter()
                 Gson().fromJson(json, Class.forName(className)) as AbstractFilter
             }
         }

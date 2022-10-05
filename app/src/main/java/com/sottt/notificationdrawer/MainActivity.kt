@@ -21,6 +21,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.databinding.ActivityMainBinding
 import com.sottt.notificationdrawer.service.ListenerController
 import com.sottt.notificationdrawer.service.NotificationListener
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             Util.LogUtil.d(TAG, "MainActivity: service bind")
-            listenerController = ListenerController.create()
+            listenerController = ListenerController
             listenerController.setBinder(service as NotificationListener.NotificationListenBinder)
         }
 
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Repository.storeAllFilter()
         unbindListenerService()
         listenerController.activityDestroy()
     }

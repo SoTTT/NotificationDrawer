@@ -13,6 +13,8 @@ import com.sottt.notificationdrawer.R
 import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.databinding.FragmentFilterBinding
 import com.sottt.notificationdrawer.filter.AbstractFilter
+import com.sottt.notificationdrawer.setting.SettingActivity
+import com.sottt.notificationdrawer.setting.ui.createFilterFragment.CreateFilterFragment
 
 class FilterFragment : Fragment() {
 
@@ -31,13 +33,30 @@ class FilterFragment : Fragment() {
     ): View {
         _viewBinding = FragmentFilterBinding.inflate(inflater, container, false)
         val linear = viewBinding.linearView
+        return viewBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewBinding.button.setOnClickListener {
+            val activity = this.requireActivity() as SettingActivity
+            activity.navController.navigate(
+                R.id.action_filterFragment_to_createFilterFragment,
+                Bundle().apply {
+                    putInt("TAG", CreateFilterFragment.TAG_PACKAGE_FILTER)
+                })
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
         val filters = Repository.getFilters()
+        val inflater = layoutInflater
         if (filters.isEmpty()) {
             inflater.inflate(R.layout.fragment_filter_blank, viewBinding.linearView, true)
         } else {
             createFilterCards(filters, inflater, viewBinding.linearView)
         }
-        return viewBinding.root
     }
 
     override fun onDestroyView() {
