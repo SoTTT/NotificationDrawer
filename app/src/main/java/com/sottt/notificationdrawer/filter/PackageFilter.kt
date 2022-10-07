@@ -2,7 +2,7 @@ package com.sottt.notificationdrawer.filter
 
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 
-class PackageFilter() : AbstractFilter(), java.io.Serializable {
+class PackageFilter() : AbstractFilter() {
 
     init {
         tag = "PACKAGE_FILTER"
@@ -10,6 +10,10 @@ class PackageFilter() : AbstractFilter(), java.io.Serializable {
     }
 
     private val packageNameSet = HashSet<String>()
+
+    fun getPackageNameArray(): List<String> {
+        return packageNameSet.toList()
+    }
 
     override fun check(notification: NotificationInfo): Boolean {
         return !packageNameSet.contains(notification.packageName)
