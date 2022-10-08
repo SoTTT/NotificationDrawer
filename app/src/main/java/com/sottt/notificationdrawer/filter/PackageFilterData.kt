@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 data class PackageFilterData(
     val tag: String?,
-    val isValid: Boolean,
+    val valid: Boolean,
     val name: String?,
     val packageNameList: List<String>?
 ) : Parcelable {
@@ -20,7 +20,7 @@ data class PackageFilterData(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(tag)
-        parcel.writeByte(if (isValid) 1 else 0)
+        parcel.writeByte(if (valid) 1 else 0)
         parcel.writeString(name)
         parcel.writeStringList(packageNameList)
     }

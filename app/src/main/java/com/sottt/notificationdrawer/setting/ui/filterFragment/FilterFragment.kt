@@ -70,7 +70,7 @@ class FilterFragment : Fragment() {
         parent: ViewGroup
     ) {
         for (filter in filters) {
-            inflater.inflate(R.layout.filter_info, parent).apply {
+            val view = inflater.inflate(R.layout.filter_info, parent, false).apply {
                 findViewById<TextView>(R.id.filter_name).apply {
                     text = filter.name
                 }
@@ -83,8 +83,9 @@ class FilterFragment : Fragment() {
                         filter.valid = isChecked
                     }
                 }
-                putView(filter.key, this)
             }
+            putView(filter.key, view)
+            viewBinding.linearView.addView(view)
         }
     }
 

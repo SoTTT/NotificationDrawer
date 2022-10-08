@@ -34,7 +34,7 @@ class CreateFilterFragment : Fragment() {
     var tag: Int = TAG_DEFAULT_FILTER
 
     private var filterName = ""
-    private val packageNameSet = HashSet<String>()
+    private var packageNameSet = HashSet<String>()
 
     companion object {
         const val TAG_DEFAULT_FILTER = 0
@@ -58,49 +58,55 @@ class CreateFilterFragment : Fragment() {
         when (tag) {
             TAG_DEFAULT_FILTER -> throw ErrorTagException()
             TAG_PACKAGE_FILTER -> {
-                val view = inflater.inflate(R.layout.create_package_filter_layout, rootLayout, true)
-                view.findViewById<EditText>(R.id.editText)
-                    .addTextChangedListener(object : TextWatcher {
-                        override fun onTextChanged(
-                            s: CharSequence?,
-                            start: Int,
-                            before: Int,
-                            count: Int
-                        ) {
-                            filterName = s?.toString() ?: ""
-                        }
-
-                        override fun beforeTextChanged(
-                            s: CharSequence?,
-                            start: Int,
-                            count: Int,
-                            after: Int
-                        ) {
-                            Util.LogUtil.v("CreateFilterFragment", "beforeTextChanged")
-                        }
-
-                        override fun afterTextChanged(s: Editable?) {
-                            Util.LogUtil.v("CreateFilterFragment", "afterTextChanged")
-                        }
-                    })
-                view.findViewById<Button>(R.id.add_app_button).setOnClickListener {
-                    showAppSelectDialog()
-                }
-                view.findViewById<Button>(R.id.enter_button).setOnClickListener {
-                    val activity = activity as SettingActivity
-                    Repository.addFilter(PackageFilter().apply {
-                        name = filterName
-                        addPackageName(packageNameSet)
-                    })
-                    activity.navController.popBackStack()
-                }
+                createPackageFilterView(inflater)
             }
         }
         return view
     }
 
+    private fun createPackageFilterView(inflater: LayoutInflater) {
+        val view = inflater.inflate(R.layout.create_package_filter_layout, rootLayout, true)
+        view.findViewById<EditText>(R.id.editText)
+            .addTextChangedListener(object : TextWatcher {
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+                    filterName = s?.toString() ?: ""
+                }
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                    Util.LogUtil.v("CreateFilterFragment", "beforeTextChanged")
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    Util.LogUtil.v("CreateFilterFragment", "afterTextChanged")
+                }
+            })
+        view.findViewById<Button>(R.id.add_app_button).setOnClickListener {
+            showAppSelectDialog()
+        }
+        view.findViewById<Button>(R.id.enter_button).setOnClickListener {
+            val activity = activity as SettingActivity
+            Repository.addFilter(PackageFilter().apply {
+                name = filterName
+                addPackageName(packageNameSet)
+            })
+            activity.navController.popBackStack()
+        }
+    }
+
     private fun createAppSelectDialog(): AlertDialog {
-        val appList = NotificationDrawerApplication.getInstalledAppList().toTypedArray()
+        val appList = NotificationDrawerApplication.getInstalledAppList().map {
+            NotificationDrawerApplication.getAppName(it) //非常耗时间的操作，在无缓存的情况下阻塞UI几分钟
+        }.toTypedArray()
         val checkedList = List(appList.size) { index ->
             packageNameSet.contains(appList.elementAt(index))
         }.toBooleanArray();

@@ -19,6 +19,7 @@ import com.sottt.notificationdrawer.Util.LogUtil
 import com.sottt.notificationdrawer.Util.createNullNotification
 import com.sottt.notificationdrawer.Util.toNotificationInfo
 import com.sottt.notificationdrawer.data.defined.FilterInfo
+import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import com.sottt.notificationdrawer.filter.AbstractFilter
 import com.sottt.notificationdrawer.filter.FilterCollection
 import com.sottt.notificationdrawer.filter.NotificationFilterHandler
@@ -77,16 +78,6 @@ class NotificationListener : NotificationListenerService() {
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-//        thread {
-//            sleep(5000)
-//            val list = activeNotifications.toList()
-//            Repository.loadActiveNotification(list.map {
-//                it.toNotificationInfo()
-//            })
-//            for (item in list) {
-//                LogUtil.d(TAG, item.toNotificationInfo().toString() + list.size.toString())
-//            }
-//        }
         LogUtil.d(TAG, "onBind")
         val action = intent?.action
         //reference: https://stackoverflow.com/questions/34625022/android-service-not-yet-bound-but-onbind-is-called
@@ -104,9 +95,12 @@ class NotificationListener : NotificationListenerService() {
         LogUtil.d(TAG, "onNotificationPosted: ${sbn?.packageName}")
         val list = activeNotifications.toList()
         LogUtil.d(TAG, "onNotificationPosted: size of activeNotification is ${list.size}")
-        Repository.addActiveNotification(
-            sbn?.toNotificationInfo() ?: createNullNotification()
-        )
+        val notification = sbn?.toNotificationInfo() ?: return
+        if ((filterHandler as NotificationFilterHandler).check(notification)) {
+            return
+        } else {
+            Repository.addActiveNotification(notification)
+        }
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
@@ -186,15 +180,5 @@ class NotificationListener : NotificationListenerService() {
     fun getAllFilters(): List<AbstractFilter> {
         return (filterHandler as NotificationFilterHandler).getAllFilters()
     }
-
-//    fun flushFilter() {
-//
-//    }
-//
-//    fun flushFiler(filters: List<AbstractFilter>) {
-//        filterHandler.clear()
-//        filterHandler.addAllFilter(filters)
-//    }
-
 
 }

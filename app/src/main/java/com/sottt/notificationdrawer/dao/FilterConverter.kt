@@ -75,12 +75,13 @@ class FilterConverter {
     fun converterJsonToFilter(json: String, tag: String): AbstractFilter? {
         return if (filterTagToFilterPackageName.keys.contains(tag)) {
             val data = Gson().fromJson(json, Class.forName(filterTagToFilterDataClassName[tag]!!))
+            Util.LogUtil.d(TAG, data.toString())
             when (tag) {
                 "PACKAGE_FILTER" -> {
                     PackageFilter().apply {
                         addPackageName((data as PackageFilterData).packageNameList ?: listOf())
                         name = data.name
-                        valid = data.isValid
+                        valid = data.valid
                     }
                 }
                 else -> {
