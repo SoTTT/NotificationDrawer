@@ -148,7 +148,7 @@ object Repository {
             synchronized(this) {
                 val list = dao.selectWithPackageName(packageName)
                 for (item in list) {
-                    item.smallIcon = NotificationDrawerApplication.getAppIcon(item.packageName)
+                    item.smallIcon = NotificationDrawerApplication.getAppIcon(item.packageName)!!
                 }
                 list
             }

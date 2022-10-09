@@ -94,7 +94,7 @@ object Util {
             this.packageName,
             this.key,
             //getApplicationIcon(this.packageName, applicationContext())
-            NotificationDrawerApplication.getAppIcon(this.packageName)
+            NotificationDrawerApplication.getAppIcon(this.packageName)!!
         )
     }
 
@@ -212,21 +212,18 @@ object Util {
 
     }
 
-    fun getAppCoreInfoFromPackName(context: Context, packageName: String): ApplicationCoreInfo {
+    fun getAppCoreInfoList(
+        context: Context,
+    ): List<ApplicationCoreInfo> {
         val packageInfoList = context.packageManager.getInstalledPackages(
             PackageManager.GET_ACTIVITIES or
                     PackageManager.GET_SERVICES
         )
-        val appInfo = packageInfoList.find {
-            it.packageName == packageName
-        }
-        return if (appInfo == null) {
-            throw PackageManager.NameNotFoundException("$packageName is not found")
-        } else {
+        return packageInfoList.map {
             ApplicationCoreInfo(
-                packageName,
-                context.packageManager.getApplicationLabel(appInfo.applicationInfo).toString(),
-                getApplicationIcon(appInfo.packageName, context)
+                it.packageName,
+                context.packageManager.getApplicationLabel(it.applicationInfo).toString(),
+                getApplicationIcon(it.packageName, context)
             )
         }
     }

@@ -47,8 +47,7 @@ class FilterLoader {
             }.apply {
                 for ((key, list) in this) {
                     putStringSet(key, list.map {
-                        //注意！这里是直接把Filter对象转换成Json，而转换回来的时候要先转换成FilterData，所以注意字段名称要一致
-                        Gson().toJson(it)
+                        Gson().toJson(converter.convertFilterToData(it))
                     }.toSet())
                 }
             }

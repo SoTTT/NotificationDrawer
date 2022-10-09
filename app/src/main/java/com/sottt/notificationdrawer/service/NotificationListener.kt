@@ -71,7 +71,7 @@ class NotificationListener : NotificationListenerService() {
         val list = activeNotifications.toList()
         Repository.loadActiveNotification(list.map {
             it.toNotificationInfo()
-        })
+        }.filter((filterHandler as NotificationFilterHandler)::check))
         for (item in list) {
             LogUtil.d(TAG, item.toNotificationInfo().toString() + list.size.toString())
         }
@@ -93,13 +93,11 @@ class NotificationListener : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         super.onNotificationPosted(sbn)
         LogUtil.d(TAG, "onNotificationPosted: ${sbn?.packageName}")
-        val list = activeNotifications.toList()
-        LogUtil.d(TAG, "onNotificationPosted: size of activeNotification is ${list.size}")
         val notification = sbn?.toNotificationInfo() ?: return
         if ((filterHandler as NotificationFilterHandler).check(notification)) {
-            return
-        } else {
             Repository.addActiveNotification(notification)
+        } else {
+            return
         }
     }
 

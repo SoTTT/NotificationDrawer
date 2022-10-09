@@ -44,11 +44,10 @@ class FilterConverter {
         return filterTagToFilterPackageName.keys;
     }
 
-    fun <T> convertFilterToData(
-        filter: AbstractFilter, dataClassObject: Class<T>
-    ): Parcelable {
+    fun convertFilterToData(filter: AbstractFilter): Any {
         return when (filterTagToFilterPackageName[filter.tag] ?: "null") {
-            PackageFilter::javaClass.name -> {
+            PackageFilter::class.java.name -> {
+                val dataClassObject = Class.forName(filterTagToFilterDataClassName[filter.tag]!!)
                 val constructor = dataClassObject.getConstructor(
                     String::class.java,
                     Boolean::class.java,

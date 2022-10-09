@@ -105,7 +105,7 @@ class CreateFilterFragment : Fragment() {
 
     private fun createAppSelectDialog(): AlertDialog {
         val appList = NotificationDrawerApplication.getInstalledAppList().map {
-            NotificationDrawerApplication.getAppName(it) //非常耗时间的操作，在无缓存的情况下阻塞UI几分钟
+            NotificationDrawerApplication.getAppName(it)!!
         }.toTypedArray()
         val checkedList = List(appList.size) { index ->
             packageNameSet.contains(appList.elementAt(index))

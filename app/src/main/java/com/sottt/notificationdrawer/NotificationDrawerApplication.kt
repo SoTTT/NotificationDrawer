@@ -10,7 +10,6 @@ import com.sottt.notificationdrawer.data.defined.ApplicationPermissionStatus
 import com.sottt.notificationdrawer.data.defined.ApplicationSettings
 import kotlinx.coroutines.sync.Mutex
 import java.util.*
-import kotlin.collections.HashMap
 
 class NotificationDrawerApplication : Application() {
 
@@ -34,38 +33,32 @@ class NotificationDrawerApplication : Application() {
 
         fun applicationContext() = mContext
 
-        private val appNameCache: HashMap<String, ApplicationCoreInfo> = HashMap()
+        private val appNameCache = HashSet<ApplicationCoreInfo>()
 
-        fun getAppName(packageName: String): String {
-            synchronized(lockForAppNameCache) {
-                val appCoreInfo = appNameCache[packageName]
-                return if (appCoreInfo == null) {
-                    val appInfo = Util.getAppCoreInfoFromPackName(applicationContext(), packageName)
-                    appNameCache[packageName] = appInfo
-                    appInfo.appName
-                } else {
-                    appCoreInfo.appName
+        fun getAppName(packageName: String): String? {
+            synchronized(appNameCache) {
+                if (appNameCache.isEmpty()) {
+                    appNameCache.addAll(Util.getAppCoreInfoList(applicationContext()))
                 }
+                return appNameCache.find {
+                    it.packageName == packageName
+                }?.appName
             }
         }
-
-        private val lockForAppNameCache = Mutex()
 
         @SuppressLint("ObsoleteSdkInt", "UseCompatLoadingForDrawables")
         fun getApplicationIcon(packageName: String, context: Context): Bitmap {
             return Util.getApplicationIcon(packageName, context)
         }
 
-        fun getAppIcon(packageName: String): Bitmap {
-            synchronized(lockForAppNameCache) {
-                val appCoreInfo = appNameCache[packageName]
-                return if (appCoreInfo == null) {
-                    val appInfo = Util.getAppCoreInfoFromPackName(applicationContext(), packageName)
-                    appNameCache[packageName] = appInfo
-                    appInfo.icon
-                } else {
-                    appCoreInfo.icon
+        fun getAppIcon(packageName: String): Bitmap? {
+            synchronized(appNameCache) {
+                if (appNameCache.isEmpty()) {
+                    appNameCache.addAll(Util.getAppCoreInfoList(applicationContext()))
                 }
+                return appNameCache.find {
+                    it.packageName == packageName
+                }?.icon
             }
         }
 
