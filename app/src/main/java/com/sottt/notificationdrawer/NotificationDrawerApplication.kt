@@ -8,7 +8,6 @@ import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.data.defined.ApplicationCoreInfo
 import com.sottt.notificationdrawer.data.defined.ApplicationPermissionStatus
 import com.sottt.notificationdrawer.data.defined.ApplicationSettings
-import kotlinx.coroutines.sync.Mutex
 import java.util.*
 
 class NotificationDrawerApplication : Application() {
@@ -33,14 +32,12 @@ class NotificationDrawerApplication : Application() {
 
         fun applicationContext() = mContext
 
-        private val appNameCache = HashSet<ApplicationCoreInfo>()
+        private val appCoreInfoCache = HashSet<ApplicationCoreInfo>()
 
         fun getAppName(packageName: String): String? {
-            synchronized(appNameCache) {
-                if (appNameCache.isEmpty()) {
-                    appNameCache.addAll(Util.getAppCoreInfoList(applicationContext()))
-                }
-                return appNameCache.find {
+            synchronized(appCoreInfoCache) {
+                iniAppCoreInfoCache()
+                return appCoreInfoCache.find {
                     it.packageName == packageName
                 }?.appName
             }
@@ -52,13 +49,17 @@ class NotificationDrawerApplication : Application() {
         }
 
         fun getAppIcon(packageName: String): Bitmap? {
-            synchronized(appNameCache) {
-                if (appNameCache.isEmpty()) {
-                    appNameCache.addAll(Util.getAppCoreInfoList(applicationContext()))
-                }
-                return appNameCache.find {
+            synchronized(appCoreInfoCache) {
+                iniAppCoreInfoCache()
+                return appCoreInfoCache.find {
                     it.packageName == packageName
                 }?.icon
+            }
+        }
+
+        private fun iniAppCoreInfoCache() {
+            if (appCoreInfoCache.isEmpty()) {
+                appCoreInfoCache.addAll(Util.getAppCoreInfoList(applicationContext()))
             }
         }
 
@@ -66,15 +67,6 @@ class NotificationDrawerApplication : Application() {
             Util.getInstalledApp(applicationContext())
 
     }
-
-
-//    private fun iniAppNameCache() {
-//        thread {
-//            synchronized(lockForAppNameCache) {
-//                appNameCache = Util.packageNameToAppName(applicationContext())
-//            }
-//        }
-//    }
 
     override fun onCreate() {
         super.onCreate()

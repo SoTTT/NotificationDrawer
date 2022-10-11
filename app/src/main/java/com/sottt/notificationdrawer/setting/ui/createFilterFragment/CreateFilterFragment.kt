@@ -2,7 +2,6 @@ package com.sottt.notificationdrawer.setting.ui.createFilterFragment
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,10 +9,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.FrameLayout
-import androidx.core.widget.addTextChangedListener
+import android.widget.*
+import android.widget.AdapterView.OnItemSelectedListener
 import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.R
 import com.sottt.notificationdrawer.Util
@@ -30,11 +27,18 @@ class CreateFilterFragment : Fragment() {
     }
 
     private lateinit var rootLayout: FrameLayout
+    private lateinit var selectedAppListView: ListView
 
     var tag: Int = TAG_DEFAULT_FILTER
 
     private var filterName = ""
     private var packageNameSet = HashSet<String>()
+
+    private val selectedAppPackageName get() = packageNameSet.toList()
+    private val selectedAppLabelName
+        get() = selectedAppPackageName.toList().map {
+            NotificationDrawerApplication.getAppName(it)
+        }
 
     companion object {
         const val TAG_DEFAULT_FILTER = 0
@@ -101,10 +105,19 @@ class CreateFilterFragment : Fragment() {
             })
             activity.navController.popBackStack()
         }
+        selectedAppListView = view.findViewById<ListView>(R.id.target_app_list).apply {
+            val adapter = ArrayAdapter<String>(
+                this@CreateFilterFragment.activity as Context,
+                android.R.layout.simple_list_item_1,
+                selectedAppLabelName
+            )
+            this.adapter = adapter
+        }
     }
 
     private fun createAppSelectDialog(): AlertDialog {
-        val appList = NotificationDrawerApplication.getInstalledAppList().map {
+        val packageNameList = NotificationDrawerApplication.getInstalledAppList()
+        val appList = packageNameList.map {
             NotificationDrawerApplication.getAppName(it)!!
         }.toTypedArray()
         val checkedList = List(appList.size) { index ->
@@ -119,13 +132,33 @@ class CreateFilterFragment : Fragment() {
                 dialog.dismiss()
             }
             .setPositiveButton("enter") { dialog, _ ->
-                for ((index, item) in appList.withIndex()) {
+                for ((index, item) in packageNameList.withIndex()) {
                     if (checkedList.elementAt(index)) {
                         packageNameSet.add(item)
                     }
                 }
+                val adapter = ArrayAdapter<String>(
+                    this@CreateFilterFragment.activity as Context,
+                    android.R.layout.simple_list_item_1,
+                    selectedAppLabelName
+                )
+                selectedAppListView.adapter = adapter
                 dialog.dismiss()
-            }.create()
+            }.setOnItemSelectedListener(object : OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    //do nothing
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    //do nothing
+                }
+
+            }).create()
         return dialog
     }
 

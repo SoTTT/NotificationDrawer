@@ -1,5 +1,5 @@
 package com.sottt.notificationdrawer.data.defined
 
 data class FilterInfo(val name: String, val tag: String) {
-    val id get() = "${tag}_${name}_"
+    val key get() = tag + name
 }
