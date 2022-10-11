@@ -5,7 +5,14 @@ import java.util.*
 
 class NotificationFilterHandler : FilterCollection, Checkable {
 
+    interface OnFiltersChanged {
+        fun onFilterRemoved(filter: AbstractFilter)
+        fun onFilterAdded(filter: AbstractFilter)
+    }
+
     private val mFilterCollection = mutableListOf<AbstractFilter>()
+
+    private var onFiltersChangedCallback: OnFiltersChanged? = null
 
     private var _isValid: Boolean = true
 
@@ -16,20 +23,32 @@ class NotificationFilterHandler : FilterCollection, Checkable {
     }
 
     override fun check(notification: NotificationInfo): Boolean {
-        var flag = true
-        mFilterCollection.forEach {
-            flag = it.check(notification)
+        return if (isValid) {
+            var flag = true
+            mFilterCollection.forEach {
+                flag = it.check(notification)
+            }
+            flag
+        } else {
+            true
         }
-        return flag
+
     }
 
     override fun addFilter(filter: AbstractFilter): Boolean {
+        onFiltersChangedCallback?.onFilterAdded(filter)
         return mFilterCollection.add(filter)
     }
 
     override fun removeFilter(tag: String): Boolean {
-        return mFilterCollection.removeIf {
+        val filter = mFilterCollection.find {
             it.tag == tag
+        }
+        return if (filter == null) {
+            false
+        } else {
+            onFiltersChangedCallback?.onFilterRemoved(filter)
+            mFilterCollection.remove(filter)
         }
     }
 
@@ -46,16 +65,27 @@ class NotificationFilterHandler : FilterCollection, Checkable {
     }
 
     override fun clear() {
+        for (item in mFilterCollection) {
+            onFiltersChangedCallback?.onFilterRemoved(item)
+        }
         mFilterCollection.clear()
     }
 
     override fun filter(notifications: Collection<NotificationInfo>): Collection<NotificationInfo> {
-        return notifications.filter {
-            check(it)
+        return if (isValid) {
+            notifications.filter {
+                check(it)
+            }
+        } else {
+            notifications
         }
     }
 
     fun getAllFilters(): List<AbstractFilter> {
         return mFilterCollection
+    }
+
+    fun setOnFiltersChanged(callbackObject: OnFiltersChanged) {
+        onFiltersChangedCallback = callbackObject
     }
 }

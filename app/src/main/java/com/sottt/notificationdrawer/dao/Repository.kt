@@ -9,28 +9,76 @@ import com.sottt.notificationdrawer.data.defined.ApplicationPermissionStatus
 import com.sottt.notificationdrawer.data.defined.ApplicationSettings
 import com.sottt.notificationdrawer.data.defined.NotificationInfo
 import com.sottt.notificationdrawer.filter.AbstractFilter
+import com.sottt.notificationdrawer.filter.NotificationFilterHandler
 import com.sottt.notificationdrawer.service.ListenerController
 import com.sottt.notificationdrawer.setting.ui.AppSettingsFragment
+import kotlinx.coroutines.internal.SynchronizedObject
 import java.util.concurrent.Callable
 import java.util.concurrent.FutureTask
 import kotlin.concurrent.thread
 
 object Repository {
 
+    private const val TAG = "Repository"
+
     data class PackageNameAndCount(val name: String?, val count: Int?)
 
-    private const val TAG = "Repository"
+    interface OnFilterChanged {
+        fun onFilterRemoved(filter: AbstractFilter)
+        fun onFilterAdded(filter: AbstractFilter)
+    }
+
+    init {
+        if (ListenerController.isInit) {
+            ListenerController.setOnFilterChanged(object :
+                NotificationFilterHandler.OnFiltersChanged {
+                override fun onFilterRemoved(filter: AbstractFilter) {
+                    ListenerController.flushActiveNotificationForRepository()
+                }
+
+                override fun onFilterAdded(filter: AbstractFilter) {
+                    ListenerController.flushActiveNotificationForRepository()
+                }
+            })
+            Util.LogUtil.d(TAG, "Controller is init! callback is registered")
+        } else {
+            ListenerController.setOnControllerInitStatusChanged(object :
+                ListenerController.OnControllerInitStatusChanged {
+                override fun changed(new: Boolean) {
+                    Util.LogUtil.d(TAG, "Controller isn't init! register StatusChangedCallback")
+                    if (new)
+                        ListenerController.setOnFilterChanged(object :
+                            NotificationFilterHandler.OnFiltersChanged {
+                            override fun onFilterRemoved(filter: AbstractFilter) {
+                                ListenerController.flushActiveNotificationForRepository()
+                            }
+
+                            override fun onFilterAdded(filter: AbstractFilter) {
+                                ListenerController.flushActiveNotificationForRepository()
+                            }
+                        })
+                    Util.LogUtil.d(TAG, "Controller is init! callback is registered")
+                }
+            })
+        }
+    }
+
     private val settingsPreference by lazy {
         AppSettingsFragment.getPreference(applicationContext())
     }
 
     //_activeNotification应当在自己发生变化时将变化同步给HoneFragmentViewModel的LiveData
     private var _activeNotification = MutableLiveData<List<NotificationInfo>>()
+
     val activeNotification: LiveData<List<NotificationInfo>> = _activeNotification
+
     private val filterLoader by lazy {
         FilterLoader()
     }
+
     private val filterList = filterLoader.loadFilters().toMutableList()
+
+    private var callbackObject: OnFilterChanged? = null
 
     fun loadActiveNotification(list: List<NotificationInfo>) {
         _activeNotification.postValue(list)
@@ -73,7 +121,6 @@ object Repository {
     }
 
     fun create() {}
-
 
     fun writeSettings(settings: ApplicationSettings) {
         settingsPreference.edit().apply {
@@ -181,7 +228,12 @@ object Repository {
         return filterList.add(filter)
     }
 
-    fun addFilter(filter: List<AbstractFilter>): Boolean {
+    fun addFilter(filter: Collection<AbstractFilter>): Boolean {
         return filterList.addAll(filter)
     }
+
+    fun setOnFilterChanged(callbackObject: OnFilterChanged) {
+        this.callbackObject = callbackObject
+    }
+
 }

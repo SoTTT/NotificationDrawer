@@ -56,8 +56,4 @@ class SettingActivity : AppCompatActivity() {
         return viewModel
     }
 
-    private fun loadFilter() {
-
-    }
-
 }

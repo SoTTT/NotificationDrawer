@@ -12,6 +12,7 @@ import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import androidx.core.app.NotificationCompat
+import androidx.preference.PreferenceManager
 import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.MainActivity
 import com.sottt.notificationdrawer.R
@@ -28,15 +29,14 @@ import com.sottt.notificationdrawer.filter.NotificationFilterHandler
 class NotificationListener : NotificationListenerService() {
 
     companion object {
-        const val TAG = "NotificationListener_SOTTT"
+        const val TAG = "NotificationListener"
     }
 
     private val mBinder = NotificationListenBinder()
 
-    val isFilterValid: Boolean get() = (filterHandler as NotificationFilterHandler).isValid
+    val isFilterValid: Boolean get() = filterHandler.isValid
 
     inner class NotificationListenBinder : Binder() {
-
 
         fun getNotification() = activeNotifications.toList()
 
@@ -46,16 +46,22 @@ class NotificationListener : NotificationListenerService() {
 
         fun setFilterValid(valid: Boolean) {
             if (valid != isFilterValid)
-                (filterHandler as NotificationFilterHandler).setValid(valid)
+                filterHandler.setValid(valid)
         }
 
         fun getAllFilters(): List<AbstractFilter> = this@NotificationListener.getAllFilters()
 
+        fun setOnFilterChanged(callbackObject: NotificationFilterHandler.OnFiltersChanged) {
+            filterHandler.setOnFiltersChanged(callbackObject)
+        }
+
+        fun flushActiveNotificationForRepository() {
+            pushNotificationToRepository()
+        }
+
     }
 
-    private val filterHandler: FilterCollection by lazy {
-        NotificationFilterHandler()
-    }
+    private val filterHandler = NotificationFilterHandler()
 
     private fun cancelOneNotification(key: String) {
         super.cancelNotification(key)
@@ -68,10 +74,14 @@ class NotificationListener : NotificationListenerService() {
             "onListenerConnected: NotificationListener be connected to notification manager"
         )
         iniNotificationFilterHandler()
+        pushNotificationToRepository()
+    }
+
+    private fun pushNotificationToRepository() {
         val list = activeNotifications.toList()
         Repository.loadActiveNotification(list.map {
             it.toNotificationInfo()
-        }.filter((filterHandler as NotificationFilterHandler)::check))
+        }.filter(filterHandler::check))
         for (item in list) {
             LogUtil.d(TAG, item.toNotificationInfo().toString() + list.size.toString())
         }
@@ -94,7 +104,7 @@ class NotificationListener : NotificationListenerService() {
         super.onNotificationPosted(sbn)
         LogUtil.d(TAG, "onNotificationPosted: ${sbn?.packageName}")
         val notification = sbn?.toNotificationInfo() ?: return
-        if ((filterHandler as NotificationFilterHandler).check(notification)) {
+        if (filterHandler.check(notification)) {
             Repository.addActiveNotification(notification)
         } else {
             return
@@ -173,10 +183,13 @@ class NotificationListener : NotificationListenerService() {
     private fun iniNotificationFilterHandler() {
         val allFilter = Repository.getFilters()
         filterHandler.addAllFilter(allFilter)
+        val valid =
+            PreferenceManager.getDefaultSharedPreferences(this).getBoolean("use_filter", false)
+        filterHandler.setValid(valid)
     }
 
     fun getAllFilters(): List<AbstractFilter> {
-        return (filterHandler as NotificationFilterHandler).getAllFilters()
+        return filterHandler.getAllFilters()
     }
 
 }

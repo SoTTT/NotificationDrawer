@@ -28,6 +28,50 @@ import java.util.*
 
 object Util {
 
+    object LogUtil {
+
+        const val VERBOSE = 1;
+
+        const val DEBUG = 2;
+
+        const val INFO = 3;
+
+        const val WARNING = 4;
+
+        const val ERROR = 5;
+
+        fun v(tag: String, msg: String) {
+            if (applicationLogLevel <= VERBOSE) {
+                Log.v(tag, msg)
+            }
+        }
+
+        fun d(tag: String, msg: String) {
+            if (applicationLogLevel <= DEBUG) {
+                Log.d(tag, msg)
+            }
+        }
+
+        fun i(tag: String, msg: String) {
+            if (applicationLogLevel <= INFO) {
+                Log.i(tag, msg)
+            }
+        }
+
+        fun w(tag: String, msg: String) {
+            if (applicationLogLevel <= WARNING) {
+                Log.w(tag, msg)
+            }
+        }
+
+        fun e(tag: String, msg: String) {
+            if (applicationLogLevel <= ERROR) {
+                Log.e(tag, msg)
+            }
+        }
+
+    }
+
     fun createNullNotification(): NotificationInfo {
         return NotificationInfo(
             "null",
@@ -160,56 +204,8 @@ object Util {
         return notificationAccessEnable(context) && notificationEnable(context)
     }
 
-    object LogUtil {
-
-        const val VERBOSE = 1;
-
-        const val DEBUG = 2;
-
-        const val INFO = 3;
-
-        const val WARNING = 4;
-
-        const val ERROR = 5;
-
-        fun v(tag: String, msg: String) {
-            if (applicationLogLevel <= VERBOSE) {
-                Log.v(tag, msg)
-            }
-        }
-
-        fun d(tag: String, msg: String) {
-            if (applicationLogLevel <= DEBUG) {
-                Log.d(tag, msg)
-            }
-        }
-
-        fun i(tag: String, msg: String) {
-            if (applicationLogLevel <= INFO) {
-                Log.i(tag, msg)
-            }
-        }
-
-        fun w(tag: String, msg: String) {
-            if (applicationLogLevel <= WARNING) {
-                Log.w(tag, msg)
-            }
-        }
-
-        fun e(tag: String, msg: String) {
-            if (applicationLogLevel <= ERROR) {
-                Log.e(tag, msg)
-            }
-        }
-
-    }
-
     fun isMainThread(): Boolean {
         return Looper.getMainLooper() === Looper.myLooper()
-    }
-
-    object ColorUtil {
-
     }
 
     fun getAppCoreInfoList(

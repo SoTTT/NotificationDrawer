@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import android.widget.AdapterView.OnItemSelectedListener
 import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.R
 import com.sottt.notificationdrawer.Util
@@ -37,7 +36,7 @@ class CreateFilterFragment : Fragment() {
     private val selectedAppPackageName get() = packageNameSet.toList()
     private val selectedAppLabelName
         get() = selectedAppPackageName.toList().map {
-            NotificationDrawerApplication.getAppName(it)
+            NotificationDrawerApplication.getAppLabelName(it)
         }
 
     companion object {
@@ -118,7 +117,7 @@ class CreateFilterFragment : Fragment() {
     private fun createAppSelectDialog(): AlertDialog {
         val packageNameList = NotificationDrawerApplication.getInstalledAppList()
         val appList = packageNameList.map {
-            NotificationDrawerApplication.getAppName(it)!!
+            NotificationDrawerApplication.getAppLabelName(it)!!
         }.toTypedArray()
         val checkedList = List(appList.size) { index ->
             packageNameSet.contains(appList.elementAt(index))
@@ -144,21 +143,7 @@ class CreateFilterFragment : Fragment() {
                 )
                 selectedAppListView.adapter = adapter
                 dialog.dismiss()
-            }.setOnItemSelectedListener(object : OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    //do nothing
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    //do nothing
-                }
-
-            }).create()
+            }.create()
         return dialog
     }
 

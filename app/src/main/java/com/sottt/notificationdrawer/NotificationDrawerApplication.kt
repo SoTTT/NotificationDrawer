@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.PerformanceHintManager
 import com.sottt.notificationdrawer.dao.Repository
 import com.sottt.notificationdrawer.data.defined.ApplicationCoreInfo
 import com.sottt.notificationdrawer.data.defined.ApplicationPermissionStatus
@@ -34,7 +35,7 @@ class NotificationDrawerApplication : Application() {
 
         private val appCoreInfoCache = HashSet<ApplicationCoreInfo>()
 
-        fun getAppName(packageName: String): String? {
+        fun getAppLabelName(packageName: String): String? {
             synchronized(appCoreInfoCache) {
                 iniAppCoreInfoCache()
                 return appCoreInfoCache.find {

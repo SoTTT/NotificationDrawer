@@ -22,10 +22,6 @@ class HomeFragment : Fragment() {
         const val TAG = "NotificationListener_SOTTT_HomeFragment"
     }
 
-//    private val bottomSheetBehavior by lazy {
-//        BottomSheetBehavior.from(viewBinding.bottomSheet)
-//    }
-
     private val viewModel by lazy {
         ViewModelProvider(this).get(HomeFragmentViewModel::class.java)
     }
@@ -36,6 +32,11 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
     }
 
     override fun onCreateView(

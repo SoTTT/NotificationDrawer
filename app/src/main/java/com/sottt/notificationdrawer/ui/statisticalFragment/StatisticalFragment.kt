@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.github.mikephil.charting.components.Description
@@ -119,7 +118,7 @@ class StatisticalFragment : Fragment() {
         val map = viewModel.createClassificationNotification()
         val packageNames = map.keys.toList()
         val appNames = packageNames.map {
-            NotificationDrawerApplication.getAppName(it)
+            NotificationDrawerApplication.getAppLabelName(it)
         }
         val viewPagerAdapter = ViewPagerAdapter(fragment, map, viewModel)
         val viewPager = viewBinding.pager

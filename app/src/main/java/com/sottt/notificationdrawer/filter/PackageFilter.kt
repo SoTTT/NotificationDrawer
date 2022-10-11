@@ -16,7 +16,10 @@ class PackageFilter() : AbstractFilter() {
     }
 
     override fun check(notification: NotificationInfo): Boolean {
-        return !packageNameSet.contains(notification.packageName)
+        return if (valid)
+            !packageNameSet.contains(notification.packageName)
+        else
+            false
     }
 
     fun addPackageName(packageName: String): Boolean {

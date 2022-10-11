@@ -1,20 +1,20 @@
 package com.sottt.notificationdrawer.service
 
+import com.sottt.notificationdrawer.Util
 import com.sottt.notificationdrawer.data.defined.FilterInfo
 import com.sottt.notificationdrawer.filter.AbstractFilter
+import com.sottt.notificationdrawer.filter.NotificationFilterHandler
 
 object ListenerController {
 
-    fun AbstractFilter.toFilterInfo(): FilterInfo {
+    private const val TAG = "ListenerController"
+
+    private fun AbstractFilter.toFilterInfo(): FilterInfo {
         return FilterInfo(this.name ?: "", this.tag)
     }
 
-    interface ControllerInitStatusChanged {
+    interface OnControllerInitStatusChanged {
         fun changed(new: Boolean)
-    }
-
-    interface OnFilterMergeListener {
-        fun onMerge()
     }
 
     class BinderNotConnectedException() : Exception() {
@@ -26,12 +26,16 @@ object ListenerController {
 
     private val listenerControllerImpl = ListenerControllerImpl()
 
+    private var callbackObject: OnControllerInitStatusChanged? = null
+
     val isInit get() = mIsInit
 
     fun setBinder(binder: NotificationListener.NotificationListenBinder) {
         if (!isInit) {
             listenerControllerImpl.setBinder(binder)
             mIsInit = true
+            callbackObject?.changed(true)
+            Util.LogUtil.d(TAG, "Controller is Init!")
         }
     }
 
@@ -52,6 +56,18 @@ object ListenerController {
         return getAllFilter().map {
             it.toFilterInfo()
         }
+    }
+
+    fun setOnFilterChanged(callbackObject: NotificationFilterHandler.OnFiltersChanged) {
+        listenerControllerImpl.setOnFilterChanged(callbackObject)
+    }
+
+    fun setOnControllerInitStatusChanged(callbackObject: OnControllerInitStatusChanged) {
+        this.callbackObject = callbackObject
+    }
+
+    fun flushActiveNotificationForRepository() {
+        listenerControllerImpl.flushActiveNotificationForRepository()
     }
 
 }
