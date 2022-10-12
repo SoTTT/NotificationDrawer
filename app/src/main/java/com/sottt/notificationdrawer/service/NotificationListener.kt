@@ -79,6 +79,7 @@ class NotificationListener : NotificationListenerService() {
 
     private fun pushNotificationToRepository() {
         val list = activeNotifications.toList()
+        LogUtil.d(TAG,"FilterHandler: ${filterHandler.size()} filters")
         Repository.loadActiveNotification(list.map {
             it.toNotificationInfo()
         }.filter(filterHandler::check))

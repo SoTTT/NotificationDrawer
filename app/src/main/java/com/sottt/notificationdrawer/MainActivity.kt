@@ -61,7 +61,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Repository.storeAllFilter()
         unbindListenerService()
         listenerController.activityDestroy()
     }

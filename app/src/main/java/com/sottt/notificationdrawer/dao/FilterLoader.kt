@@ -59,7 +59,7 @@ class FilterLoader {
     }
 
     fun storeFilter(filter: AbstractFilter) {
-
+        storeFilters(listOf(filter))
     }
 
     fun loadFilters(): List<AbstractFilter> {

@@ -24,8 +24,8 @@ object Repository {
     data class PackageNameAndCount(val name: String?, val count: Int?)
 
     interface OnFilterChanged {
-        fun onFilterRemoved(filter: AbstractFilter)
-        fun onFilterAdded(filter: AbstractFilter)
+        fun onFilterRemoved(filter: AbstractFilter): Boolean
+        fun onFilterAdded(filter: AbstractFilter): Boolean
     }
 
     init {
@@ -33,10 +33,12 @@ object Repository {
             ListenerController.setOnFilterChanged(object :
                 NotificationFilterHandler.OnFiltersChanged {
                 override fun onFilterRemoved(filter: AbstractFilter) {
+                    Util.LogUtil.d(TAG,"a filter removed, flush active notification list")
                     ListenerController.flushActiveNotificationForRepository()
                 }
 
                 override fun onFilterAdded(filter: AbstractFilter) {
+                    Util.LogUtil.d(TAG,"a filter added, flush active notification list")
                     ListenerController.flushActiveNotificationForRepository()
                 }
             })
@@ -50,10 +52,12 @@ object Repository {
                         ListenerController.setOnFilterChanged(object :
                             NotificationFilterHandler.OnFiltersChanged {
                             override fun onFilterRemoved(filter: AbstractFilter) {
+                                Util.LogUtil.d(TAG,"a filter removed, flush active notification list")
                                 ListenerController.flushActiveNotificationForRepository()
                             }
 
                             override fun onFilterAdded(filter: AbstractFilter) {
+                                Util.LogUtil.d(TAG,"a filter added, flush active notification list")
                                 ListenerController.flushActiveNotificationForRepository()
                             }
                         })
@@ -139,13 +143,13 @@ object Repository {
         }.apply()
     }
 
-    fun storeAllNotification(notification: List<NotificationInfo>) {
+    private fun storeAllNotification(notification: List<NotificationInfo>) {
         for (item in notification) {
             storeNotification(item)
         }
     }
 
-    fun storeNotification(notification: NotificationInfo) {
+    private fun storeNotification(notification: NotificationInfo) {
         thread {
             synchronized(notification) {
                 val keys = dao.selectAllKey()
@@ -170,10 +174,6 @@ object Repository {
         return task
     }
 
-
-    fun storeFilter(filters: List<AbstractFilter>) {
-        filterLoader.storeFilters(filters)
-    }
 
     private fun <T> storeFilter(filter: AbstractFilter, javaClass: Class<T>) {
         filterLoader.storeFilter(filter)
@@ -220,12 +220,19 @@ object Repository {
         return filterList.toList()
     }
 
+    private fun storeFilter(filters: List<AbstractFilter>) {
+        filterLoader.storeFilters(filters)
+    }
+
     fun storeAllFilter() {
         storeFilter(filterList)
     }
 
     fun addFilter(filter: AbstractFilter): Boolean {
-        return filterList.add(filter)
+        filterLoader.storeFilter(filter)
+        val flag = filterList.add(filter)
+        callbackObject?.onFilterAdded(filter)
+        return flag
     }
 
     fun addFilter(filter: Collection<AbstractFilter>): Boolean {
