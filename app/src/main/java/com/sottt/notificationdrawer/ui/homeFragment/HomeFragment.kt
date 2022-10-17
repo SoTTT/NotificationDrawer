@@ -32,11 +32,12 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Util.LogUtil.d(TAG, "HomeFragment onCreate")
     }
 
     override fun onResume() {
         super.onResume()
-
+        Util.LogUtil.d(TAG, "HomeFragment onResume")
     }
 
     override fun onCreateView(
@@ -44,6 +45,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _viewBinding = FragmentHomeBinding.inflate(inflater, container, false)
+        Util.LogUtil.d(TAG, "HomeFragment onCreateView")
         return viewBinding.root
     }
 
@@ -52,11 +54,14 @@ class HomeFragment : Fragment() {
         startService()
         val activity = activity as MainActivity
         activity.bindListenerService()
+        Util.LogUtil.d(TAG, "HomeFragment onViewCreated")
+        initAdapterData()
         iniView()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Util.LogUtil.d(TAG, "HomeFragment onDestroy")
         _viewBinding = null
     }
 
@@ -68,7 +73,7 @@ class HomeFragment : Fragment() {
     private fun iniListViewItemCallback() {
         viewBinding.cardList.setOnItemClickListener { _, _, position, _ ->
             Util.LogUtil.d(TAG, "view clicked : position is $position")
-            val item = viewModel.adapterData.value?.elementAt(position)
+            val item = viewModel.adapter.getItem(position)
             if (item != null) {
                 val bundle = Bundle().apply {
                     putString("TITLE", item.title)
@@ -84,25 +89,40 @@ class HomeFragment : Fragment() {
     }
 
     private fun addNotificationListSyncs() {
-        Repository.activeNotification.observe(this.viewLifecycleOwner) {
-            viewModel.setCurrentNotification(it)
+        Repository.setOnActiveNotificationChanged(object : Repository.OnActiveNotificationChanged {
+            override fun onActiveNotificationAdded(
+                notification: NotificationInfo,
+                category: Repository.NotificationCategory
+            ) {
+                viewModel.adapter.add(notification)
+                viewModel.adapter.notifyDataSetChanged()
+            }
+
+            override fun onActiveNotificationRemoved(
+                notification: NotificationInfo,
+                category: Repository.NotificationCategory
+            ) {
+                viewModel.adapter.add(notification)
+                viewModel.adapter.notifyDataSetChanged()
+            }
+
+        })
+        viewBinding.cardList.adapter = viewModel.adapter
+        viewModel.adapter.notifyDataSetChanged()
+    }
+
+    private fun initAdapterData() {
+        if (viewModel.adapterInitFlag) {
+            return
         }
         val list = mutableListOf<NotificationInfo>()
-        val adapter =
+        viewModel.adapter =
             NotificationInfoAdapter(
                 this.activity as MainActivity,
                 R.layout.notification_card,
                 list
             )
-        viewModel.adapterData.observe(this.viewLifecycleOwner) {
-            Util.LogUtil.d(TAG, it.size.toString())
-            for (item in it) {
-                Util.LogUtil.d(TAG, item.toString())
-            }
-            adapter.clear()
-            adapter.addAll(it)
-        }
-        viewBinding.cardList.adapter = adapter
+        viewModel.adapterInitFlag = true
     }
 
     private fun startService() {

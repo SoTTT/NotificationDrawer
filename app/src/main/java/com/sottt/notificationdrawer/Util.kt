@@ -16,6 +16,7 @@ import android.os.Looper
 import android.os.PowerManager
 import android.provider.Settings
 import android.service.notification.StatusBarNotification
+import android.text.SpannableString
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
@@ -124,7 +125,7 @@ object Util {
 
     fun StatusBarNotification.toNotificationInfo(): NotificationInfo {
         val bundle = this.notification.extras
-        val text = bundle.getString(Notification.EXTRA_TEXT)
+        val text = bundle.get(Notification.EXTRA_TEXT).toString()
         val title = bundle.getString(Notification.EXTRA_TITLE)
         val timeLong = this.postTime
         val timeFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())

@@ -115,7 +115,7 @@ class NotificationListener : NotificationListenerService() {
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
         super.onNotificationRemoved(sbn)
         LogUtil.d(TAG, "onNotificationRemoved: id=${sbn?.id}")
-        Repository.removeActiveNotification(sbn?.id)
+        Repository.removeActiveNotification(sbn?.id?.toLong())
     }
 
     override fun onCreate() {

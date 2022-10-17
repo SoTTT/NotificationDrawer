@@ -12,7 +12,6 @@ import com.sottt.notificationdrawer.filter.AbstractFilter
 import com.sottt.notificationdrawer.filter.NotificationFilterHandler
 import com.sottt.notificationdrawer.service.ListenerController
 import com.sottt.notificationdrawer.setting.ui.AppSettingsFragment
-import kotlinx.coroutines.internal.SynchronizedObject
 import java.util.concurrent.Callable
 import java.util.concurrent.FutureTask
 import kotlin.concurrent.thread
@@ -21,6 +20,11 @@ object Repository {
 
     private const val TAG = "Repository"
 
+    enum class NotificationCategory {
+        GENERAL_NOTIFICATION,
+        FILTERED_NOTIFICATION,
+    }
+
     data class PackageNameAndCount(val name: String?, val count: Int?)
 
     interface OnFilterChanged {
@@ -28,17 +32,29 @@ object Repository {
         fun onFilterAdded(filter: AbstractFilter): Boolean
     }
 
+    interface OnActiveNotificationChanged {
+        fun onActiveNotificationAdded(
+            notification: NotificationInfo,
+            category: NotificationCategory
+        )
+
+        fun onActiveNotificationRemoved(
+            notification: NotificationInfo,
+            category: NotificationCategory
+        )
+    }
+
     init {
         if (ListenerController.isInit) {
             ListenerController.setOnFilterChanged(object :
                 NotificationFilterHandler.OnFiltersChanged {
                 override fun onFilterRemoved(filter: AbstractFilter) {
-                    Util.LogUtil.d(TAG,"a filter removed, flush active notification list")
+                    Util.LogUtil.d(TAG, "a filter removed, flush active notification list")
                     ListenerController.flushActiveNotificationForRepository()
                 }
 
                 override fun onFilterAdded(filter: AbstractFilter) {
-                    Util.LogUtil.d(TAG,"a filter added, flush active notification list")
+                    Util.LogUtil.d(TAG, "a filter added, flush active notification list")
                     ListenerController.flushActiveNotificationForRepository()
                 }
             })
@@ -52,12 +68,18 @@ object Repository {
                         ListenerController.setOnFilterChanged(object :
                             NotificationFilterHandler.OnFiltersChanged {
                             override fun onFilterRemoved(filter: AbstractFilter) {
-                                Util.LogUtil.d(TAG,"a filter removed, flush active notification list")
+                                Util.LogUtil.d(
+                                    TAG,
+                                    "a filter removed, flush active notification list"
+                                )
                                 ListenerController.flushActiveNotificationForRepository()
                             }
 
                             override fun onFilterAdded(filter: AbstractFilter) {
-                                Util.LogUtil.d(TAG,"a filter added, flush active notification list")
+                                Util.LogUtil.d(
+                                    TAG,
+                                    "a filter added, flush active notification list"
+                                )
                                 ListenerController.flushActiveNotificationForRepository()
                             }
                         })
@@ -72,9 +94,10 @@ object Repository {
     }
 
     //_activeNotification应当在自己发生变化时将变化同步给HoneFragmentViewModel的LiveData
-    private var _activeNotification = MutableLiveData<List<NotificationInfo>>()
+//    private var _activeNotification = MutableLiveData<List<NotificationInfo>>()
 
-    val activeNotification: LiveData<List<NotificationInfo>> = _activeNotification
+    private var activeNotification: MutableList<NotificationInfo> = mutableListOf()
+    val activeNotificationList get() = activeNotification.toList()
 
     private val filterLoader by lazy {
         FilterLoader()
@@ -82,30 +105,29 @@ object Repository {
 
     private val filterList = filterLoader.loadFilters().toMutableList()
 
-    private var callbackObject: OnFilterChanged? = null
+    private var filterChangedCallbackObject: OnFilterChanged? = null
+    private var notificationChangedCallbackObject: OnActiveNotificationChanged? = null
 
     fun loadActiveNotification(list: List<NotificationInfo>) {
-        _activeNotification.postValue(list)
+        for (item in list) {
+            addActiveNotification(item)
+        }
         storeAllNotification(list)
     }
 
     fun addActiveNotification(item: NotificationInfo) {
-        val mutableList = activeNotification.value?.toMutableList()
-        mutableList?.add(item)
-        loadActiveNotification(mutableList?.toList() ?: listOf())
+        activeNotification.add(item)
+        callbackForNotificationAdded(item, NotificationCategory.GENERAL_NOTIFICATION)
         storeNotification(item)
     }
 
-    fun removeActiveNotification(id: Int?) {
+    fun removeActiveNotification(id: Long?): Boolean {
         if (id == null) {
             Util.LogUtil.d(TAG, "${TAG}: notification id is null")
-            return
+            return false
         }
-        val it = activeNotification.value?.find {
-            it.notificationId == id
-        }
-        _activeNotification.value = activeNotification.value?.filter {
-            it.notificationId != id
+        return activeNotification.removeIf {
+            it.id == id
         }
     }
 
@@ -231,7 +253,7 @@ object Repository {
     fun addFilter(filter: AbstractFilter): Boolean {
         filterLoader.storeFilter(filter)
         val flag = filterList.add(filter)
-        callbackObject?.onFilterAdded(filter)
+        callbackForFilterAdded(filter)
         return flag
     }
 
@@ -240,7 +262,33 @@ object Repository {
     }
 
     fun setOnFilterChanged(callbackObject: OnFilterChanged) {
-        this.callbackObject = callbackObject
+        this.filterChangedCallbackObject = callbackObject
+    }
+
+    fun setOnActiveNotificationChanged(callbackObject: OnActiveNotificationChanged) {
+        this.notificationChangedCallbackObject = callbackObject
+    }
+
+    private fun callbackForFilterAdded(filter: AbstractFilter) {
+        filterChangedCallbackObject?.onFilterAdded(filter)
+    }
+
+    private fun callbackForFilterRemoved(filter: AbstractFilter) {
+        filterChangedCallbackObject?.onFilterRemoved(filter)
+    }
+
+    private fun callbackForNotificationAdded(
+        notification: NotificationInfo,
+        category: NotificationCategory
+    ) {
+        notificationChangedCallbackObject?.onActiveNotificationAdded(notification, category)
+    }
+
+    private fun callbackForNotificationRemoved(
+        notification: NotificationInfo,
+        category: NotificationCategory
+    ) {
+        notificationChangedCallbackObject?.onActiveNotificationRemoved(notification, category)
     }
 
 }
