@@ -91,6 +91,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        startListenerService()
+        bindListenerService()
         val navView = viewBinding.nav
         val navController = findNavController(R.id.main_activity_center)
         val appBarConfiguration = AppBarConfiguration(
@@ -131,11 +133,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun iniBottomSheetDialogCallback() {
-        dialog = BottomSheetDialog(this)
+        dialog = BottomSheetDialog(this, R.style.BottomSheetDialog)
         val view =
             layoutInflater.inflate(R.layout.notification_information_bottom_sheet_layout, null)
         dialog.setContentView(view)
+//        dialog.window?.setBackgroundDrawableResource(R.drawable.notification_info_dialog_background)
         behavior = BottomSheetBehavior.from(view.parent as View)
+        behavior.isHideable = true
         behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
@@ -182,7 +186,7 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    fun replaceFragmentTo(id: Int, fragment: Fragment) {
+    private fun replaceFragmentTo(id: Int, fragment: Fragment) {
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
         transaction.replace(id, fragment)
@@ -193,22 +197,22 @@ class MainActivity : AppCompatActivity() {
         replaceFragmentTo(viewBinding.mainActivityCenter.id, fragment)
     }
 
-    fun startListenerService() {
+    private fun startListenerService() {
         val intent = Intent(this, NotificationListener::class.java)
         startForegroundService(intent)
     }
 
-    fun stopListenerService() {
+    private fun stopListenerService() {
         val intent = Intent(this, NotificationListener::class.java)
         stopService(intent)
     }
 
-    fun bindListenerService() {
+    private fun bindListenerService() {
         val intent = Intent(this, NotificationListener::class.java)
         bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
-    fun unbindListenerService() {
+    private fun unbindListenerService() {
         unbindService(connection)
     }
 }

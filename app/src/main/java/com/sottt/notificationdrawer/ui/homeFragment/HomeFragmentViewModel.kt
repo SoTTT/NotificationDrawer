@@ -8,7 +8,5 @@ import com.sottt.notificationdrawer.data.defined.NotificationInfo
 
 class HomeFragmentViewModel : ViewModel() {
 
-    lateinit var adapter: ArrayAdapter<NotificationInfo>
-    var adapterInitFlag = false
 
 }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.sottt.notificationdrawer.dao.Repository
@@ -30,6 +31,8 @@ class HomeFragment : Fragment() {
 
     private val viewBinding get() = _viewBinding!!
 
+    private lateinit var adapter: ArrayAdapter<NotificationInfo>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Util.LogUtil.d(TAG, "HomeFragment onCreate")
@@ -38,6 +41,7 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Util.LogUtil.d(TAG, "HomeFragment onResume")
+        adapter.notifyDataSetChanged()
     }
 
     override fun onCreateView(
@@ -51,9 +55,6 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startService()
-        val activity = activity as MainActivity
-        activity.bindListenerService()
         Util.LogUtil.d(TAG, "HomeFragment onViewCreated")
         initAdapterData()
         iniView()
@@ -73,11 +74,11 @@ class HomeFragment : Fragment() {
     private fun iniListViewItemCallback() {
         viewBinding.cardList.setOnItemClickListener { _, _, position, _ ->
             Util.LogUtil.d(TAG, "view clicked : position is $position")
-            val item = viewModel.adapter.getItem(position)
+            val item = adapter.getItem(position)
             if (item != null) {
                 val bundle = Bundle().apply {
                     putString("TITLE", item.title)
-                    putString("CONTENT", item.title)
+                    putString("CONTENT", item.content)
                     putString("TIME", item.time)
                     putString("PACKAGE_NAME", item.packageName)
                     putParcelable("ICON", item.smallIcon)
@@ -94,44 +95,30 @@ class HomeFragment : Fragment() {
                 notification: NotificationInfo,
                 category: Repository.NotificationCategory
             ) {
-                viewModel.adapter.add(notification)
-                viewModel.adapter.notifyDataSetChanged()
+                adapter.add(notification)
+                adapter.notifyDataSetChanged()
             }
 
             override fun onActiveNotificationRemoved(
                 notification: NotificationInfo,
                 category: Repository.NotificationCategory
             ) {
-                viewModel.adapter.add(notification)
-                viewModel.adapter.notifyDataSetChanged()
+                adapter.add(notification)
+                adapter.notifyDataSetChanged()
             }
 
         })
-        viewBinding.cardList.adapter = viewModel.adapter
-        viewModel.adapter.notifyDataSetChanged()
+        viewBinding.cardList.adapter = adapter
+        adapter.notifyDataSetChanged()
     }
 
     private fun initAdapterData() {
-        if (viewModel.adapterInitFlag) {
-            return
-        }
-        val list = mutableListOf<NotificationInfo>()
-        viewModel.adapter =
+        adapter =
             NotificationInfoAdapter(
                 this.activity as MainActivity,
                 R.layout.notification_card,
-                list
+                Repository.activeNotificationList.toMutableList()
             )
-        viewModel.adapterInitFlag = true
-    }
-
-    private fun startService() {
-        if (activity == null) {
-            Util.LogUtil.w(TAG, "activity context is null!!")
-        } else {
-            val activity = activity as MainActivity
-            activity.startListenerService()
-        }
     }
 
 

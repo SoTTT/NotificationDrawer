@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <!--背景，顶部两个圆角-->
+        <item name="android:background">@drawable/notification_info_dialog_background</item>
+    </style>
+    <style name="BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <!--底部弹出条的样式（相当于背景）-->
+        <item name="bottomSheetStyle">@style/BottomSheet</item>
+        <!--状态栏颜色-->
+        <item name="android:statusBarColor">@color/transparent</item>
+        <!--导航条颜色-->
+        <item name="android:navigationBarColor">@color/white</item>
+    </style>
+</resources>
