@@ -95,7 +95,6 @@ class HomeFragment : Fragment() {
                 notification: NotificationInfo,
                 category: Repository.NotificationCategory
             ) {
-                adapter.add(notification)
                 adapter.notifyDataSetChanged()
             }
 
@@ -103,7 +102,6 @@ class HomeFragment : Fragment() {
                 notification: NotificationInfo,
                 category: Repository.NotificationCategory
             ) {
-                adapter.add(notification)
                 adapter.notifyDataSetChanged()
             }
 
@@ -117,7 +115,7 @@ class HomeFragment : Fragment() {
             NotificationInfoAdapter(
                 this.activity as MainActivity,
                 R.layout.notification_card,
-                Repository.activeNotificationList.toMutableList()
+                Repository.activeNotificationList
             )
     }
 

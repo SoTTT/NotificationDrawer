@@ -80,7 +80,7 @@ class NotificationListener : NotificationListenerService() {
 
     private fun pushNotificationToRepository() {
         val list = activeNotifications.toList()
-        LogUtil.d(TAG,"FilterHandler: ${filterHandler.size()} filters")
+        LogUtil.d(TAG, "FilterHandler: ${filterHandler.size()} filters")
         Repository.loadActiveNotification(list.map {
             it.toNotificationInfo()
         }.filter(filterHandler::check))
@@ -116,7 +116,7 @@ class NotificationListener : NotificationListenerService() {
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
         super.onNotificationRemoved(sbn)
         LogUtil.d(TAG, "onNotificationRemoved: id=${sbn?.id}")
-        Repository.removeActiveNotification(sbn?.id?.toLong())
+        Repository.removeActiveNotification(sbn?.id)
     }
 
     override fun onCreate() {

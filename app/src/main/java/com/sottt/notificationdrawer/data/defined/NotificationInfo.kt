@@ -6,7 +6,6 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.sottt.notificationdrawer.R
 import java.io.Serializable
 
 @Entity
@@ -14,7 +13,7 @@ data class NotificationInfo(
     var title: String,
     var content: String,
     var time: String,
-    var notificationId: Int,
+    var id: Int,
     var packageName: String,
     var key: String,
     @Ignore
@@ -22,7 +21,7 @@ data class NotificationInfo(
 ) : Serializable, Parcelable {
 
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
+    var dataBaseId: Long = 0
 
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,
@@ -33,7 +32,7 @@ data class NotificationInfo(
         parcel.readString()!!,
         parcel.readParcelable(Bitmap::class.java.classLoader)!!
     ) {
-        id = parcel.readLong()
+        dataBaseId = parcel.readLong()
     }
 
     constructor() : this("null", "null", "null", 0, "null", "null")
@@ -42,11 +41,11 @@ data class NotificationInfo(
         parcel.writeString(title)
         parcel.writeString(content)
         parcel.writeString(time)
-        parcel.writeInt(notificationId)
+        parcel.writeInt(id)
         parcel.writeString(packageName)
         parcel.writeString(key)
         parcel.writeParcelable(smallIcon, flags)
-        parcel.writeLong(id)
+        parcel.writeLong(dataBaseId)
     }
 
     override fun describeContents(): Int {

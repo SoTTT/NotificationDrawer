@@ -93,7 +93,7 @@ object Repository {
     }
 
     private var activeNotification: MutableList<NotificationInfo> = LinkedList<NotificationInfo>()
-    val activeNotificationList get() = activeNotification.toList()
+    val activeNotificationList get() = activeNotification
 
     private var filteredNotification = mutableListOf<NotificationInfo>()
 
@@ -103,8 +103,8 @@ object Repository {
 
     private val filterList = filterLoader.loadFilters().toMutableList()
 
-    private var filterChangedCallbackObject: OnFilterChanged? = null
-    private var notificationChangedCallbackObject: OnActiveNotificationChanged? = null
+    private var filterChangedCallbackObject = HashSet<OnFilterChanged>()
+    private var notificationChangedCallbackObject = HashSet<OnActiveNotificationChanged>()
 
     fun loadActiveNotification(list: List<NotificationInfo>) {
         for (item in list) {
@@ -119,13 +119,20 @@ object Repository {
         storeNotification(item)
     }
 
-    fun removeActiveNotification(id: Long?): Boolean {
+    fun removeActiveNotification(id: Int?): Boolean {
         if (id == null) {
             Util.LogUtil.d(TAG, "${TAG}: notification id is null")
             return false
         }
         return activeNotification.removeIf {
-            it.id == id
+            if (it.id == id.toInt()) {
+                callbackForNotificationRemoved(it, NotificationCategory.GENERAL_NOTIFICATION)
+                Util.LogUtil.d(TAG, "the found id :$id")
+                true
+            } else {
+                Util.LogUtil.d(TAG, "not found id :$id")
+                false
+            }
         }
     }
 
@@ -173,7 +180,7 @@ object Repository {
             synchronized(notification) {
                 val keys = dao.selectAllKey()
                 if (!keys.contains(notification.key))
-                    notification.id = dao.insertNotification(notification)
+                    notification.dataBaseId = dao.insertNotification(notification)
                 Util.LogUtil.v(
                     TAG,
                     "DAO(Thread: ${Thread.currentThread().id}) :${notification.toString()}"
@@ -258,34 +265,42 @@ object Repository {
         return filterList.addAll(filter)
     }
 
-    fun setOnFilterChanged(callbackObject: OnFilterChanged) {
-        this.filterChangedCallbackObject = callbackObject
+    fun setOnFilterChanged(callbackObject: OnFilterChanged):Boolean {
+        return this.filterChangedCallbackObject.add(callbackObject)
     }
 
-    fun setOnActiveNotificationChanged(callbackObject: OnActiveNotificationChanged) {
-        this.notificationChangedCallbackObject = callbackObject
+    fun setOnActiveNotificationChanged(callbackObject: OnActiveNotificationChanged):Boolean {
+        return this.notificationChangedCallbackObject.add(callbackObject)
     }
 
     private fun callbackForFilterAdded(filter: AbstractFilter) {
-        filterChangedCallbackObject?.onFilterAdded(filter)
+        filterChangedCallbackObject.forEach {
+            it.onFilterAdded(filter)
+        }
     }
 
     private fun callbackForFilterRemoved(filter: AbstractFilter) {
-        filterChangedCallbackObject?.onFilterRemoved(filter)
+        filterChangedCallbackObject.forEach {
+            it.onFilterRemoved(filter)
+        }
     }
 
     private fun callbackForNotificationAdded(
         notification: NotificationInfo,
         category: NotificationCategory
     ) {
-        notificationChangedCallbackObject?.onActiveNotificationAdded(notification, category)
+        notificationChangedCallbackObject.forEach {
+            it.onActiveNotificationAdded(notification, category)
+        }
     }
 
     private fun callbackForNotificationRemoved(
         notification: NotificationInfo,
         category: NotificationCategory
     ) {
-        notificationChangedCallbackObject?.onActiveNotificationRemoved(notification, category)
+        notificationChangedCallbackObject.forEach {
+            it.onActiveNotificationRemoved(notification, category)
+        }
     }
 
     fun addFilteredNotification(info: NotificationInfo) {

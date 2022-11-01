@@ -44,6 +44,7 @@ class NotificationDrawerApplication : Application() {
             }
         }
 
+        @Deprecated("this method is deprecated", ReplaceWith("getAppIcon", "packageName"))
         @SuppressLint("ObsoleteSdkInt", "UseCompatLoadingForDrawables")
         fun getApplicationIcon(packageName: String, context: Context): Bitmap {
             return Util.getApplicationIcon(packageName, context)
