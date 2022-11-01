@@ -1,7 +1,5 @@
 package com.sottt.notificationdrawer.dao
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.sottt.notificationdrawer.NotificationDrawerApplication
 import com.sottt.notificationdrawer.NotificationDrawerApplication.Companion.applicationContext
 import com.sottt.notificationdrawer.Util
@@ -12,6 +10,7 @@ import com.sottt.notificationdrawer.filter.AbstractFilter
 import com.sottt.notificationdrawer.filter.NotificationFilterHandler
 import com.sottt.notificationdrawer.service.ListenerController
 import com.sottt.notificationdrawer.setting.ui.AppSettingsFragment
+import java.util.LinkedList
 import java.util.concurrent.Callable
 import java.util.concurrent.FutureTask
 import kotlin.concurrent.thread
@@ -93,11 +92,10 @@ object Repository {
         AppSettingsFragment.getPreference(applicationContext())
     }
 
-    //_activeNotification应当在自己发生变化时将变化同步给HoneFragmentViewModel的LiveData
-//    private var _activeNotification = MutableLiveData<List<NotificationInfo>>()
-
-    private var activeNotification: MutableList<NotificationInfo> = mutableListOf()
+    private var activeNotification: MutableList<NotificationInfo> = LinkedList<NotificationInfo>()
     val activeNotificationList get() = activeNotification.toList()
+
+    private var filteredNotification = mutableListOf<NotificationInfo>()
 
     private val filterLoader by lazy {
         FilterLoader()
@@ -146,7 +144,6 @@ object Repository {
 
     }
 
-    fun create() {}
 
     fun writeSettings(settings: ApplicationSettings) {
         settingsPreference.edit().apply {
@@ -289,6 +286,23 @@ object Repository {
         category: NotificationCategory
     ) {
         notificationChangedCallbackObject?.onActiveNotificationRemoved(notification, category)
+    }
+
+    fun addFilteredNotification(info: NotificationInfo) {
+        if (!filteredNotification.add(info)) {
+            return;
+        }
+        storeNotification(info)
+        callbackForNotificationAdded(info, NotificationCategory.FILTERED_NOTIFICATION)
+    }
+
+    fun removeFilterNotification(info: NotificationInfo) {
+        if (!filteredNotification.removeIf {
+                info.key == it.key
+            }) {
+            return;
+        }
+        callbackForNotificationRemoved(info, NotificationCategory.FILTERED_NOTIFICATION)
     }
 
 }

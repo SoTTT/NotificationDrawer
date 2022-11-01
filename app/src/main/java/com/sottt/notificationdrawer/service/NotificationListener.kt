@@ -65,6 +65,7 @@ class NotificationListener : NotificationListenerService() {
 
     private fun cancelOneNotification(key: String) {
         super.cancelNotification(key)
+
     }
 
     override fun onListenerConnected() {
