@@ -1,8 +1,11 @@
 package com.sottt.notificationdrawer.ui.homeFragment
 
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -71,6 +74,7 @@ class HomeFragment : Fragment() {
         iniListViewItemCallback()
     }
 
+
     private fun iniListViewItemCallback() {
         viewBinding.cardList.setOnItemClickListener { _, _, position, _ ->
             Util.LogUtil.d(TAG, "view clicked : position is $position")
@@ -87,10 +91,50 @@ class HomeFragment : Fragment() {
                 activity.showBottomSheetDialog(bundle)
             }
         }
+
+        val detector = GestureDetector(this.context, object : GestureDetector.OnGestureListener {
+            override fun onDown(e: MotionEvent?): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onShowPress(e: MotionEvent?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onScroll(
+                e1: MotionEvent?,
+                e2: MotionEvent?,
+                distanceX: Float,
+                distanceY: Float
+            ): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onLongPress(e: MotionEvent?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onFling(
+                e1: MotionEvent?,
+                e2: MotionEvent?,
+                velocityX: Float,
+                velocityY: Float
+            ): Boolean {
+                TODO("Not yet implemented")
+            }
+        })
+
+
     }
 
+
     private fun addNotificationListSyncs() {
-        Repository.setOnActiveNotificationChanged(object : Repository.OnActiveNotificationChanged {
+        Repository.setOnActiveNotificationChanged(object :
+            Repository.OnActiveNotificationChanged {
             override fun onActiveNotificationAdded(
                 notification: NotificationInfo,
                 category: Repository.NotificationCategory

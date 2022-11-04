@@ -1,7 +1,8 @@
 package com.sottt.notificationdrawer
 
+import android.graphics.Bitmap
 import android.graphics.Color
-import android.support.v7.graphics.Palette
+import androidx.palette.graphics.Palette
 import kotlin.math.floor
 
 object ColorUtil {
@@ -36,13 +37,23 @@ object ColorUtil {
         return color != Color.valueOf(Color.TRANSPARENT)
     }
 
-//    fun primaryColor(packageName: String): Color {
-//        val bitmap = NotificationDrawerApplication.getAppIcon(packageName)
-//        if (bitmap == null) {
-//            return Color.valueOf(Color.TRANSPARENT);
-//        } else {
-//            val palette = Palette.from(bitmap).generate()
-//        }
-//    }
+    fun primaryColor(packageName: String): Color {
+        val bitmap = NotificationDrawerApplication.getAppIcon(packageName)
+        return primaryColor(bitmap)
+    }
+
+    private fun primaryColor(icon: Bitmap?):Color {
+        return if (icon == null) {
+            Color.valueOf(Color.TRANSPARENT)
+        } else {
+            val palette = Palette.from(icon).generate()
+            val rgb = palette.lightVibrantSwatch?.rgb
+            return if (rgb == null) {
+                Color.valueOf(Color.TRANSPARENT)
+            } else {
+                Color.valueOf(rgb)
+            }
+        }
+    }
 
 }
