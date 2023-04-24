@@ -1,6 +1,9 @@
 package com.sottt.notificationdrawer.data.defined
 
+import android.app.Activity
 import android.content.Context
+import android.os.Build
+import android.view.Display
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -8,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.ListView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import com.sottt.notificationdrawer.R
@@ -19,7 +23,7 @@ class NotificationInfoAdapter(context: Context, sourceId: Int, data: List<Notifi
 
     companion object {
         const val TAG = "NotificationInfoAdapter"
-        const val MIN = 50;
+        const val MIN = 0;
     }
 
     private val id = sourceId
@@ -27,6 +31,24 @@ class NotificationInfoAdapter(context: Context, sourceId: Int, data: List<Notifi
     private var lastY = 0f
     private var pushX = 0f
     private var pushY = 0f
+
+    @Suppress("DEPRECATION")
+    private val height by lazy {
+        if (Build.VERSION.SDK_INT >= 30)
+            (context as Activity).windowManager.currentWindowMetrics.bounds.height()
+        else {
+            (context as Activity).windowManager.defaultDisplay.height
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private val width by lazy {
+        if (Build.VERSION.SDK_INT >= 30)
+            (context as Activity).windowManager.currentWindowMetrics.bounds.width()
+        else {
+            (context as Activity).windowManager.defaultDisplay.width
+        }
+    }
 
     inner class ViewHolder(
         val cardTitle: TextView,
@@ -59,6 +81,11 @@ class NotificationInfoAdapter(context: Context, sourceId: Int, data: List<Notifi
         }
         view.setOnTouchListener { outView, event ->
             val innerView = outView.findViewById<CardView>(R.id.card)
+            innerView.setOnFocusChangeListener { viewSelf, hasFocus ->
+                if (!hasFocus) {
+                    viewSelf.invalidate()
+                }
+            }
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     pushX = event.rawX
@@ -69,8 +96,11 @@ class NotificationInfoAdapter(context: Context, sourceId: Int, data: List<Notifi
                 MotionEvent.ACTION_MOVE -> {
                     if (abs(lastX - event.rawX) > MIN) {
                         var left = innerView.left + (event.rawX - lastX)
-                        if (left < 0) {
-                            left = 0f
+                        if (left < 10) {
+                            left = 10f
+                        }
+                        if (left + innerView.width > width - 10) {
+                            left = (width - innerView.width - 10).toFloat()
                         }
                         innerView.layout(
                             left.toInt(),
@@ -84,16 +114,15 @@ class NotificationInfoAdapter(context: Context, sourceId: Int, data: List<Notifi
 
                 }
                 MotionEvent.ACTION_UP -> {
-                    if (abs(pushX - lastX) <= MIN || abs(pushY - lastY) <= MIN) {
+                    if (abs(pushX - lastX) <= MIN || abs(pushY - lastY) <= 10) {
                         view.performClick()
                     }
                 }
-                else -> {
-
-                }
+                else -> {}
             }
             true
         }
+
         return view
     }
 
